@@ -32,7 +32,7 @@ public class resetDatabase implements CommandExecutor {
         try {
             Statement statement = databaseConnection.createStatement();
             statement.execute(sql);
-            commandSender.sendMessage("Successfully dropped the regions database!");
+            commandSender.sendMessage("§2Successfully dropped the regions database!");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -39,7 +39,7 @@ public class reloadDatabase implements CommandExecutor {
         File regionFolder = new File(worldContainer, "world/region");
 
         if (!regionFolder.exists() || !regionFolder.isDirectory()) {
-            System.out.println("Region folder not found at: " + regionFolder.getAbsolutePath());
+            System.out.println("§4Region folder not found at: " + regionFolder.getAbsolutePath());
             return false;
         }
 
@@ -53,7 +53,7 @@ public class reloadDatabase implements CommandExecutor {
 
         ArrayList<RegionData> regionDataList = new ArrayList<>();
 
-        commandSender.sendMessage("Found filepath! Finding regions!");
+        commandSender.sendMessage("§2Found filepath! Finding regions!");
         for(String file : overworldRegionFiles){
             commandSender.sendMessage("New Region Found: " + file);
             String name = file;
@@ -67,7 +67,7 @@ public class reloadDatabase implements CommandExecutor {
             regionDataList.add(new RegionData(name, xPos, zPos, "Unchecked"));
         }
 
-        commandSender.sendMessage("Found all regions! Adding regions to Database!");
+        commandSender.sendMessage("§2Found all regions! Adding regions to Database!");
         for(RegionData regionData : regionDataList){
             String sql = "INSERT OR IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";
             try {
@@ -78,13 +78,13 @@ public class reloadDatabase implements CommandExecutor {
                 ps.setString(4, "Unchecked");
                 ps.executeUpdate();
             } catch (SQLException e) {
-                System.out.println("Fail to add region to database!" + e);
-                commandSender.sendMessage("Error in adding a region to the database, see console for more info");
+                System.out.println("§4Fail to add region to database!" + e);
+                commandSender.sendMessage("§4Error in adding a region to the database, see console for more info");
             }
         }
 
-        commandSender.sendMessage("Successfully added all regions to the database!");
-        commandSender.sendMessage("Finished reloading the database!");
+        commandSender.sendMessage("§2Successfully added all regions to the database!");
+        commandSender.sendMessage("§2Finished reloading the database!");
 
 
 

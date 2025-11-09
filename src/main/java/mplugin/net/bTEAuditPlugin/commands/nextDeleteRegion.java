@@ -56,7 +56,7 @@ public class nextDeleteRegion implements CommandExecutor {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        commandSender.sendMessage("Next Region: " + regionData.getName());
+        commandSender.sendMessage("§3Next Region: " + regionData.getName());
 
         File source = new File(Bukkit.getWorldContainer(), "world/region/r." + regionData.getX() + "." + regionData.getZ() + ".mca");
         File targetDir = new File(Bukkit.getWorldContainer(), "audit_world/region/");
@@ -71,7 +71,7 @@ public class nextDeleteRegion implements CommandExecutor {
             throw new RuntimeException(e);
         }
 
-        commandSender.sendMessage("Copied Region Data to Audit World");
+        commandSender.sendMessage("§3Copied Region Data to Audit World");
 
 
         int blockX = regionData.getX() * 512 + 256;
@@ -83,7 +83,7 @@ public class nextDeleteRegion implements CommandExecutor {
         int y = voidWorld.getHighestBlockYAt(blockX, blockZ);
 
         player.teleport(new Location(voidWorld, blockX, y, blockZ));
-        player.sendMessage("§aTeleported to region: §e" + regionData.getName());
+        player.sendMessage("§3Teleported to region: " + regionData.getName());
 
         databaseManager.closeDatabase();
         return false;

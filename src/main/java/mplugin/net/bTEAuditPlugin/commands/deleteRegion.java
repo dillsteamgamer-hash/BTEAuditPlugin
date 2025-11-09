@@ -51,7 +51,7 @@ public class deleteRegion implements CommandExecutor {
 
         String regionName = "r." + regionX + "." + regionZ + ".mca";
 
-        commandSender.sendMessage("Current Region: " + regionName);
+        commandSender.sendMessage("§3Current Region: " + regionName);
 
         //Just creates an object of regionData from the database
         try (PreparedStatement ps = databaseConnection.prepareStatement("SELECT * FROM regions WHERE name=?")) {
@@ -75,24 +75,24 @@ public class deleteRegion implements CommandExecutor {
         //Makes sure the command sender defo has permission to delete the region
         //Will then update the necessary database files and delete the region I.A.
         if(!regionData.getDeleted1().equals(senderUUID) && !regionData.getDeleted2().equals(senderUUID)){
-            player.sendMessage("Has command access!");
+            player.sendMessage("§2Has command access!");
             if(args.length == 1){
                 if(args[0].equals("yes")){
                     Boolean regionDeleteWorked = initDeleteRegion();
                     Boolean recordDeleteWorked = removeRecord();
                     if(regionDeleteWorked && recordDeleteWorked){
-                        player.sendMessage("Region and Record successfully deleted!");
+                        player.sendMessage("§2Region and Record successfully deleted!");
                     }else{
-                        player.sendMessage("Region did not delete successfully!");
+                        player.sendMessage("§4Region did not delete successfully!");
                     }
                 }else if(args[0].equals("no")){
                     Boolean dataBaseUpdated = removeDeletionTag();
                     if(dataBaseUpdated){
-                        player.sendMessage("Success in resetting database, region now set as unchecked!");
+                        player.sendMessage("§2Success in resetting record, region now set as unchecked!");
                     }
                 }
             }else{
-                player.sendMessage("Invalid args, either use yes(deletes the region) or no(does not delete the region)!");
+                player.sendMessage("§4Invalid args, either use yes(deletes the region) or no(does not delete the region)!");
             }
         }
 

@@ -32,7 +32,6 @@ public class regionStats implements CommandExecutor {
         int totalHP;
         int totalMFD1;
         int totalMFD2;
-        int totalDeleted;
 
         try{
             PreparedStatement ps = databaseConnection.prepareStatement("SELECT COUNT(*) AS count FROM regions");
@@ -59,16 +58,14 @@ public class regionStats implements CommandExecutor {
 
         totalUnchecked = count("Unchecked");
         totalHP = count("HP");
-        totalDeleted = count("Deleted");
 
-        commandSender.sendMessage("-----Region Stats-----");
-        commandSender.sendMessage("Total Regions: "+totalRegions);
-        commandSender.sendMessage("Unchecked: "+totalUnchecked);
-        commandSender.sendMessage("Has Progress: "+totalHP);
-        commandSender.sendMessage("MFD 1: "+totalMFD1);
-        commandSender.sendMessage("MFD 2: "+totalMFD2);
-        commandSender.sendMessage("Deleted: "+totalDeleted);
-        commandSender.sendMessage("----------------------");
+        commandSender.sendMessage("§6-----Region Stats-----");
+        commandSender.sendMessage("§eTotal Regions: "+totalRegions);
+        commandSender.sendMessage("§eUnchecked: "+totalUnchecked);
+        commandSender.sendMessage("§eHas Progress: "+totalHP);
+        commandSender.sendMessage("§eMFD 1: "+totalMFD1);
+        commandSender.sendMessage("§eMFD 2: "+totalMFD2);
+        commandSender.sendMessage("§6----------------------");
 
         databaseManager.closeDatabase();
 

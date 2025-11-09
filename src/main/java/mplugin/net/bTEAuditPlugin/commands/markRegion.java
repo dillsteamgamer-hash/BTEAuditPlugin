@@ -58,7 +58,7 @@ public class markRegion implements CommandExecutor {
 
             String regionName = "r." + regionX + "." + regionZ + ".mca";
 
-            commandSender.sendMessage("Current Region: " + regionName);
+            commandSender.sendMessage("§3Current Region: " + regionName);
 
             try (PreparedStatement ps = databaseConnection.prepareStatement("SELECT * FROM regions WHERE name=?")) {
                 ps.setString(1, regionName);
@@ -83,7 +83,7 @@ public class markRegion implements CommandExecutor {
 
             if (args.length == 1) {
                 if (args[0].equals("MFD")) {
-                    commandSender.sendMessage("Sending to build world!");
+                    commandSender.sendMessage("§3Sending to build world!");
                     player.teleport(new Location(world, -2082, 1, -2002));
                     regionData.setStatus("MFD");
                     if (regionData.getDeleted1() == null) {
@@ -91,8 +91,8 @@ public class markRegion implements CommandExecutor {
                     } else if (regionData.getDeleted2() == null) {
                         regionData.setDeleted2(senderUUID);
                     } else {
-                        commandSender.sendMessage("An error in marking the region for deletion has occurred!");
-                        System.out.println("Error in marking region as deleted, already has 2 mark for deletions!");
+                        commandSender.sendMessage("§4An error in marking the region for deletion has occurred!");
+                        System.out.println("§4Error in marking region as deleted, already has 2 mark for deletions!");
                     }
                 } else if (args[0].equals("HP")) {
                     regionData.setStatus("HP");
@@ -100,9 +100,9 @@ public class markRegion implements CommandExecutor {
                     regionData.setDeleted2(null);
 
 
-                    commandSender.sendMessage("Teleporting to build world");
+                    commandSender.sendMessage("§3Teleporting to build world");
                     player.teleport(new Location(world, xPosition, yPosition, zPosition));
-                    commandSender.sendMessage("Please run \"/build\" add too add any new builds not already in the build counter!");
+                    commandSender.sendMessage("§3Please run \"/build\" add too add any new builds not already in the build counter!");
                 }
 
                 try (PreparedStatement ps = databaseConnection.prepareStatement("UPDATE regions SET status = ?, deleted1 = ?, deleted2 = ? WHERE name = ?")) {
@@ -111,22 +111,22 @@ public class markRegion implements CommandExecutor {
                     ps.setString(3, regionData.getDeleted2());
                     ps.setString(4, regionData.getName());
                     ps.executeUpdate();
-                    commandSender.sendMessage("Success in updating database!");
+                    commandSender.sendMessage("§2Success in updating database!");
                 } catch (SQLException e) {
-                    commandSender.sendMessage("Error in updating database!");
+                    commandSender.sendMessage("§4Error in updating database!");
                     e.printStackTrace();
                 } catch (Exception e) {
-                    commandSender.sendMessage("Error in updating database!");
+                    commandSender.sendMessage("§4Error in updating database!");
                     throw new RuntimeException(e);
                 }
                 Boolean deletionSuccessful = deleteVoidRegion();
                 if (deletionSuccessful) {
-                    player.sendMessage("Success in deleting the region copy!");
+                    player.sendMessage("§2Success in deleting the region copy!");
                 } else {
-                    player.sendMessage("And error has occurred in deleting the region copy!");
+                    player.sendMessage("§4And error has occurred in deleting the region copy!");
                 }
             } else {
-                commandSender.sendMessage("Invalid argument! Select from 'MFD'(Marked For Deletion) or 'HP'(Has Progress)");
+                commandSender.sendMessage("§4Invalid argument! Select from 'MFD'(Marked For Deletion) or 'HP'(Has Progress)");
             }
 
         }
@@ -138,7 +138,7 @@ public class markRegion implements CommandExecutor {
      private Boolean deleteVoidRegion(){
         File regionFile = new File("audit_world/region/" + regionData.getName());
         if(!regionFile.exists()){
-            System.out.println("Error in finding region file in audit_world!");
+            System.out.println("§4Error in finding region file in audit_world!");
             return false;
         }else{
             return regionFile.delete();

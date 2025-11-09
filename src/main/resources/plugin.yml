@@ -1,0 +1,45 @@
+name: BTEAuditPlugin
+version: '1.0'
+main: mplugin.net.bTEAuditPlugin.BTEAuditPlugin
+api-version: '1.21'
+authors: [ Dillsteamgamer ]
+
+commands:
+  #Tester Commands
+  TPToWorld:
+    Description: Teleports the player to the void world
+    Permission: BTEAuditPlugin.Tester
+
+
+  #Auditor Commands
+  nextRegion:
+    Description: Teleport too the next region to be audited
+    Permission: BTEAuditPlugin.Auditor
+
+  markRegion:
+    Description: Marks the region status that is currently being reviewed
+    Permission: BTEAuditPlugin.Auditor
+
+
+  #Admin Commands
+  nextDeleteRegion:
+    Description: TPs an Admin to the next world with 2 unique "Marked as for Deletion" authors
+    Permission: BTEAuditPlugin.deleteRegionFiles
+
+  deleteRegion:
+    Description: Deletes the region file only when 2 unique (non executing) users mark the region as for deletion
+    Permission: BTEAuditPlugin.deleteRegionFiles
+
+
+  #Other Commands
+  regionStats:
+    Description: Provides the breakdown of all the regions in the audit
+    Permission: BTEAuditPlugin.Status
+
+  reloadDatabase:
+    Description: Updates the database with any new regions generated since last reload
+    Permission: BTEAuditPlugin.reloadDatabase
+
+  resetDatabase:
+    Description: Completely deletes the database, this should only ever be done in extreme scenarios, or a need of a new audit, must be followed by a new /reloadDatabase
+    Permission: BTEAuditManager.resetDatabase

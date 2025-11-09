@@ -36,7 +36,7 @@ public class markRegion implements CommandExecutor {
         Player player = (Player) commandSender;
 
         World currentWorld = player.getWorld();
-        if(currentWorld.getName().equals("audit_world")) {
+        if (currentWorld.getName().equals("audit_world")) {
             databaseManager = new DatabaseManager(plugin);
             databaseManager.initDatabase();
             databaseConnection = databaseManager.getConnection();
@@ -84,7 +84,7 @@ public class markRegion implements CommandExecutor {
             if (args.length == 1) {
                 if (args[0].equals("MFD")) {
                     commandSender.sendMessage("Sending to build world!");
-                    player.teleport(new Location(world, -2082,1,-2002));
+                    player.teleport(new Location(world, -2082, 1, -2002));
                     regionData.setStatus("MFD");
                     if (regionData.getDeleted1() == null) {
                         regionData.setDeleted1(senderUUID);
@@ -120,26 +120,22 @@ public class markRegion implements CommandExecutor {
                     throw new RuntimeException(e);
                 }
                 Boolean deletionSuccessful = deleteVoidRegion();
-                if(deletionSuccessful){
+                if (deletionSuccessful) {
                     player.sendMessage("Success in deleting the region copy!");
-                }else {
+                } else {
                     player.sendMessage("And error has occurred in deleting the region copy!");
                 }
             } else {
                 commandSender.sendMessage("Invalid argument! Select from 'MFD'(Marked For Deletion) or 'HP'(Has Progress)");
             }
 
-
-
-        }else{
-            commandSender.sendMessage("Error: Not in void world!");
         }
-
+        databaseManager.closeDatabase();
         return false;
     }
 
 
-    private Boolean deleteVoidRegion(){
+     private Boolean deleteVoidRegion(){
         File regionFile = new File("audit_world/region/" + regionData.getName());
         if(!regionFile.exists()){
             System.out.println("Error in finding region file in audit_world!");

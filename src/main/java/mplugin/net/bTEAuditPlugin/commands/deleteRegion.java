@@ -76,7 +76,7 @@ public class deleteRegion implements CommandExecutor {
         //Will then update the necessary database files and delete the region I.A.
         if(!regionData.getDeleted1().equals(senderUUID) && !regionData.getDeleted2().equals(senderUUID)){
             player.sendMessage("Has command access!");
-            if(args.length != 1){
+            if(args.length == 1){
                 if(args[0].equals("yes")){
                     Boolean regionDeleteWorked = initDeleteRegion();
                     Boolean recordDeleteWorked = removeRecord();
@@ -95,6 +95,9 @@ public class deleteRegion implements CommandExecutor {
                 player.sendMessage("Invalid args, either use yes(deletes the region) or no(does not delete the region)!");
             }
         }
+
+
+        databaseManager.closeDatabase();
 
 
         return false;

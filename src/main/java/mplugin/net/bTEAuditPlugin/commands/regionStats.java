@@ -70,6 +70,7 @@ public class regionStats implements CommandExecutor {
         commandSender.sendMessage("Deleted: "+totalDeleted);
         commandSender.sendMessage("----------------------");
 
+        databaseManager.closeDatabase();
 
         return false;
     }

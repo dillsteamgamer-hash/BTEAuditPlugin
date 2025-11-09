@@ -41,16 +41,15 @@ public class deleteRegion implements CommandExecutor {
         int zPosition = player.getLocation().getBlockZ();
 
 
-        // Convert block coords to chunk coords
+        // Convert block coordinates to chunk coordinates
         int chunkX = xPosition >> 4;
         int chunkZ = zPosition >> 4;
 
-        // Convert chunk coords to region coords
+        // Convert chunk coordinates to region coordinates
         int regionX = Math.floorDiv(chunkX, 32);
         int regionZ = Math.floorDiv(chunkZ, 32);
 
         String regionName = "r." + regionX + "." + regionZ + ".mca";
-
         commandSender.sendMessage("§3Current Region: " + regionName);
 
         //Just creates an object of regionData from the database
@@ -92,7 +91,7 @@ public class deleteRegion implements CommandExecutor {
                     }
                 }
             }else{
-                player.sendMessage("§4Invalid args, either use yes(deletes the region) or no(does not delete the region)!");
+                player.sendMessage("§4Invalid argument, either use yes(deletes the region) or no(does not delete the region)!");
             }
         }
 
@@ -114,6 +113,7 @@ public class deleteRegion implements CommandExecutor {
         }
     }
 
+    //When admin decides not to delete the region
     private Boolean removeDeletionTag(){
         try{
             PreparedStatement ps = databaseConnection.prepareStatement("UPDATE regions SET status='Unchecked', deleted1=null, deleted2=null WHERE name=?");

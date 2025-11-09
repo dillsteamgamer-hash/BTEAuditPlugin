@@ -36,6 +36,7 @@ commands:
     Description: Provides the breakdown of all the regions in the audit
     Permission: BTEAuditPlugin.Status
 
+  #Other (Admin) Commands
   reloadDatabase:
     Description: Updates the database with any new regions generated since last reload
     Permission: BTEAuditPlugin.reloadDatabase

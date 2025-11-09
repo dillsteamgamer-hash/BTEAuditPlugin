@@ -34,13 +34,16 @@ public final class BTEAuditPlugin extends JavaPlugin {
         //Command Set-Up
         //Tester Commands
         Objects.requireNonNull(getCommand("tpToWorld")).setExecutor(new TPToWorld());
+        //Admin Commands
         Objects.requireNonNull(getCommand("reloadDatabase")).setExecutor(new reloadDatabase(this));
         Objects.requireNonNull(getCommand("resetDatabase")).setExecutor(new resetDatabase(this));
-        Objects.requireNonNull(getCommand("nextRegion")).setExecutor(new nextRegion(this));
-        Objects.requireNonNull(getCommand("markRegion")).setExecutor(new markRegion(this));
-        Objects.requireNonNull(getCommand("regionStats")).setExecutor(new regionStats(this));
         Objects.requireNonNull(getCommand("nextDeleteRegion")).setExecutor(new nextDeleteRegion(this));
         Objects.requireNonNull(getCommand("deleteRegion")).setExecutor(new deleteRegion(this));
+        //Auditor Commands
+        Objects.requireNonNull(getCommand("nextRegion")).setExecutor(new nextRegion(this));
+        Objects.requireNonNull(getCommand("markRegion")).setExecutor(new markRegion(this));
+        //Other Commands
+        Objects.requireNonNull(getCommand("regionStats")).setExecutor(new regionStats(this));
     }
 
 

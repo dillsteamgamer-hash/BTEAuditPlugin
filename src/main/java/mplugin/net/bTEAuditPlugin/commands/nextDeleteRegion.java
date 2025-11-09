@@ -40,6 +40,7 @@ public class nextDeleteRegion implements CommandExecutor {
         Player player = (Player) commandSender;
         String senderUUID = String.valueOf(player.getUniqueId());
 
+        //Same code as in nextRegion, with an extended SQL query to make sure that they are going to a region they can delete
         try (PreparedStatement ps = databaseConnection.prepareStatement("SELECT * FROM regions WHERE (status='MFD' AND deleted1 IS NOT NULL AND deleted2 IS NOT NULL AND deleted1 != ? AND deleted2 != ?) LIMIT 1")) {
             ps.setString(1, senderUUID);
             ps.setString(2, senderUUID);
@@ -58,6 +59,7 @@ public class nextDeleteRegion implements CommandExecutor {
         }
         commandSender.sendMessage("§3Next Region: " + regionData.getName());
 
+        //Copies the region from overworld to audit world
         File source = new File(Bukkit.getWorldContainer(), "world/region/r." + regionData.getX() + "." + regionData.getZ() + ".mca");
         File targetDir = new File(Bukkit.getWorldContainer(), "audit_world/region/");
         targetDir.mkdirs();
@@ -73,7 +75,7 @@ public class nextDeleteRegion implements CommandExecutor {
 
         commandSender.sendMessage("§3Copied Region Data to Audit World");
 
-
+        //TPs player to the centre of the copy of the region in the audit world
         int blockX = regionData.getX() * 512 + 256;
         int blockZ = regionData.getZ() * 512 + 256;
 

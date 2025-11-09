@@ -43,6 +43,7 @@ public class reloadDatabase implements CommandExecutor {
             return false;
         }
 
+        //This may crash servers, will need to look into optimising/what listFiles() actually stores
         File[] files = regionFolder.listFiles((dir, name) -> name.endsWith(".mca"));
         if (files == null) return false;
 
@@ -53,9 +54,9 @@ public class reloadDatabase implements CommandExecutor {
 
         ArrayList<RegionData> regionDataList = new ArrayList<>();
 
+        //Adds the regionData to a list
         commandSender.sendMessage("§2Found filepath! Finding regions!");
         for(String file : overworldRegionFiles){
-            commandSender.sendMessage("New Region Found: " + file);
             String name = file;
             file = file.substring(2);
 
@@ -66,7 +67,7 @@ public class reloadDatabase implements CommandExecutor {
 
             regionDataList.add(new RegionData(name, xPos, zPos, "Unchecked"));
         }
-
+        //Uses the list of regionData to add the necessary data to the database
         commandSender.sendMessage("§2Found all regions! Adding regions to Database!");
         for(RegionData regionData : regionDataList){
             String sql = "INSERT OR IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";

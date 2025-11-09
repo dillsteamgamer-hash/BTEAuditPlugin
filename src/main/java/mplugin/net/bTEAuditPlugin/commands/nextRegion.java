@@ -40,6 +40,7 @@ public class nextRegion implements CommandExecutor {
         Player player = (Player) commandSender;
         String senderUUID = String.valueOf(player.getUniqueId());
 
+        //Finds the next region in the database which can be audited by the current auditor
         try (PreparedStatement ps = databaseConnection.prepareStatement("SELECT * FROM regions WHERE status='Unchecked' OR (deleted1 IS NOT NULL AND deleted2 IS NULL AND deleted1 != ? AND status='MFD') LIMIT 1")) {
             ps.setString(1, senderUUID);
             ResultSet rs = ps.executeQuery();
@@ -57,6 +58,7 @@ public class nextRegion implements CommandExecutor {
         }
         commandSender.sendMessage("§3Next Region: " + regionData.getName());
 
+        //Copies region from overworld to the audit world
         File source = new File(Bukkit.getWorldContainer(), "world/region/r." + regionData.getX() + "." + regionData.getZ() + ".mca");
         File targetDir = new File(Bukkit.getWorldContainer(), "audit_world/region/");
         targetDir.mkdirs();
@@ -72,7 +74,7 @@ public class nextRegion implements CommandExecutor {
 
         commandSender.sendMessage("§3Copied Region Data to Audit World");
 
-
+        //TPs user to the centre of the copy of the region in the audit world
         int blockX = regionData.getX() * 512 + 256;
         int blockZ = regionData.getZ() * 512 + 256;
 

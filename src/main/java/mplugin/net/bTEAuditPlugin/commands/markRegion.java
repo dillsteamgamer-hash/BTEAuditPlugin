@@ -48,11 +48,11 @@ public class markRegion implements CommandExecutor {
             int zPosition = player.getLocation().getBlockZ();
 
 
-            // Convert block coords to chunk coords
+            // Convert block coordinates to chunk coordinates
             int chunkX = xPosition >> 4;
             int chunkZ = zPosition >> 4;
 
-            // Convert chunk coords to region coords
+            // Convert chunk coordinates to region coordinates
             int regionX = Math.floorDiv(chunkX, 32);
             int regionZ = Math.floorDiv(chunkZ, 32);
 
@@ -60,6 +60,8 @@ public class markRegion implements CommandExecutor {
 
             commandSender.sendMessage("§3Current Region: " + regionName);
 
+            //Finds and loads the data of the region currently being stood in
+            //Probably should change so that it checks if the status is unchecked as well -- make sure auditor hasn't moved to a new region
             try (PreparedStatement ps = databaseConnection.prepareStatement("SELECT * FROM regions WHERE name=?")) {
                 ps.setString(1, regionName);
                 ResultSet rs = ps.executeQuery();
@@ -81,6 +83,7 @@ public class markRegion implements CommandExecutor {
             World world = Bukkit.getWorld("world");
             assert world != null;
 
+            //Updates the regionData object to reflect the new attributes
             if (args.length == 1) {
                 if (args[0].equals("MFD")) {
                     commandSender.sendMessage("§3Sending to build world!");
@@ -105,6 +108,7 @@ public class markRegion implements CommandExecutor {
                     commandSender.sendMessage("§3Please run \"/build\" add too add any new builds not already in the build counter!");
                 }
 
+                //Updates the database using the new attributes defined in the regionData object
                 try (PreparedStatement ps = databaseConnection.prepareStatement("UPDATE regions SET status = ?, deleted1 = ?, deleted2 = ? WHERE name = ?")) {
                     ps.setString(1, regionData.getStatus());
                     ps.setString(2, regionData.getDeleted1());
@@ -134,7 +138,7 @@ public class markRegion implements CommandExecutor {
         return false;
     }
 
-
+    //Deletes the copy of the region in the void/audit world
      private Boolean deleteVoidRegion(){
         File regionFile = new File("audit_world/region/" + regionData.getName());
         if(!regionFile.exists()){

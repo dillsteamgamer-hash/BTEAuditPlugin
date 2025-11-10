@@ -8,17 +8,22 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class markRegion implements CommandExecutor {
+public class markRegion implements CommandExecutor, TabCompleter {
     DatabaseManager databaseManager;
     Connection databaseConnection;
 
@@ -147,5 +152,16 @@ public class markRegion implements CommandExecutor {
         }else{
             return regionFile.delete();
         }
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
+
+        ArrayList<String> validArgs = new ArrayList<>();
+        if(args.length == 1){
+            StringUtil.copyPartialMatches(args[0], List.of("HP", "MFD"), validArgs);
+        }
+
+        return validArgs;
     }
 }

@@ -1,4 +1,7 @@
+#This is the message sent to the auditor when they mark a region as having progress
 Mark-Progress-Message: "§3Please run \"/build add\" to add any new builds not already in the build counter!"
+
+#These are the coordinates the auditor is teleported to after marking a region as 'for deletion' or when an admin decides on whether to delete a region or not
 Mark-For-Deletion-TP-X: 0
 Mark-For-Deletion-TP-Y: 0
 Mark-For-Deletion-TP-Z: 0

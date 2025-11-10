@@ -144,7 +144,10 @@ public class markRegion implements CommandExecutor, TabCompleter {
                 commandSender.sendMessage("§4Invalid argument! Select from 'MFD'(Marked For Deletion) or 'HP'(Has Progress)");
             }
 
+        }else{
+            commandSender.sendMessage("§4Not in audit world!");
         }
+
         databaseManager.closeDatabase();
         return false;
     }

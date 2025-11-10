@@ -37,6 +37,7 @@ public final class BTEAuditPlugin extends JavaPlugin {
         //Command Set-Up
         //Tester Commands
         Objects.requireNonNull(getCommand("tpToWorld")).setExecutor(new TPToWorld());
+        Objects.requireNonNull(getCommand("auditHelp")).setExecutor(new auditHelp());
         //Admin Commands
         Objects.requireNonNull(getCommand("reloadDatabase")).setExecutor(new reloadDatabase(this));
         Objects.requireNonNull(getCommand("resetDatabase")).setExecutor(new resetDatabase(this));

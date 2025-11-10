@@ -1,8 +1,7 @@
 package mplugin.net.bTEAuditPlugin;
 
 import mplugin.net.bTEAuditPlugin.commands.*;
-import mplugin.net.bTEAuditPlugin.resources.DatabaseManager;
-import mplugin.net.bTEAuditPlugin.resources.VoidWorldGenerator;
+import mplugin.net.bTEAuditPlugin.resources.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -30,6 +29,10 @@ public final class BTEAuditPlugin extends JavaPlugin {
             getLogger().warning("Failed to create void world!");
         }
 
+        //Reads from config file
+        BlockPoint returnPoint = new BlockPoint(getConfig().getInt("Mark-For-Deletion-TP-X"), getConfig().getInt("Mark-For-Deletion-TP-Y"), getConfig().getInt("Mark-For-Deletion-TP-Z"));
+        String markAsHavingProgressMessage = getConfig().getString("Mark-Progress-Message");
+
 
         //Command Set-Up
         //Tester Commands
@@ -38,10 +41,10 @@ public final class BTEAuditPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("reloadDatabase")).setExecutor(new reloadDatabase(this));
         Objects.requireNonNull(getCommand("resetDatabase")).setExecutor(new resetDatabase(this));
         Objects.requireNonNull(getCommand("nextDeleteRegion")).setExecutor(new nextDeleteRegion(this));
-        Objects.requireNonNull(getCommand("deleteRegion")).setExecutor(new deleteRegion(this));
+        Objects.requireNonNull(getCommand("deleteRegion")).setExecutor(new deleteRegion(this, returnPoint));
         //Auditor Commands
         Objects.requireNonNull(getCommand("nextRegion")).setExecutor(new nextRegion(this));
-        Objects.requireNonNull(getCommand("markRegion")).setExecutor(new markRegion(this));
+        Objects.requireNonNull(getCommand("markRegion")).setExecutor(new markRegion(this, returnPoint, markAsHavingProgressMessage));
         //Other Commands
         Objects.requireNonNull(getCommand("regionStats")).setExecutor(new regionStats(this));
     }
@@ -51,5 +54,11 @@ public final class BTEAuditPlugin extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         database.closeDatabase();
+    }
+
+
+    @Override
+    public void onLoad(){
+        saveDefaultConfig();
     }
 }

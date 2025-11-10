@@ -1,5 +1,6 @@
 package mplugin.net.bTEAuditPlugin.commands;
 
+import mplugin.net.bTEAuditPlugin.resources.BlockPoint;
 import mplugin.net.bTEAuditPlugin.resources.DatabaseManager;
 import mplugin.net.bTEAuditPlugin.resources.RegionData;
 import org.bukkit.Bukkit;
@@ -32,8 +33,13 @@ public class markRegion implements CommandExecutor, TabCompleter {
 
     private final JavaPlugin plugin;
 
-    public markRegion(JavaPlugin plugin) {
+    private final BlockPoint teleportBlock;
+    private final String markAsHavingProgressMessage;
+
+    public markRegion(JavaPlugin plugin, BlockPoint teleportBlock, String markAsHavingProgressMessage) {
         this.plugin = plugin;
+        this.teleportBlock = teleportBlock;
+        this.markAsHavingProgressMessage = markAsHavingProgressMessage;
     }
 
     @Override
@@ -92,7 +98,7 @@ public class markRegion implements CommandExecutor, TabCompleter {
             if (args.length == 1) {
                 if (args[0].equals("MFD")) {
                     commandSender.sendMessage("§3Sending to build world!");
-                    player.teleport(new Location(world, -2082, 1, -2002));
+                    player.teleport(new Location(world, teleportBlock.getxPos(), teleportBlock.getyPos(), teleportBlock.getyPos()));
                     regionData.setStatus("MFD");
                     if (regionData.getDeleted1() == null) {
                         regionData.setDeleted1(senderUUID);
@@ -110,7 +116,7 @@ public class markRegion implements CommandExecutor, TabCompleter {
 
                     commandSender.sendMessage("§3Teleporting to build world");
                     player.teleport(new Location(world, xPosition, yPosition, zPosition));
-                    commandSender.sendMessage("§3Please run \"/build\" add too add any new builds not already in the build counter!");
+                    commandSender.sendMessage(markAsHavingProgressMessage);
                 }
 
                 //Updates the database using the new attributes defined in the regionData object

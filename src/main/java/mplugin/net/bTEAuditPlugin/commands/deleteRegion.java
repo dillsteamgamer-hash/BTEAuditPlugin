@@ -1,7 +1,11 @@
 package mplugin.net.bTEAuditPlugin.commands;
 
+import mplugin.net.bTEAuditPlugin.resources.BlockPoint;
 import mplugin.net.bTEAuditPlugin.resources.DatabaseManager;
 import mplugin.net.bTEAuditPlugin.resources.RegionData;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,12 +30,15 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
 
     RegionData regionData;
 
+    BlockPoint blockPoint;
+
 
     private final JavaPlugin plugin;
 
 
-    public deleteRegion(JavaPlugin plugin){
+    public deleteRegion(JavaPlugin plugin, BlockPoint blockPoint){
         this.plugin = plugin;
+        this.blockPoint = blockPoint;
     }
 
     @Override
@@ -76,6 +83,9 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
             throw new RuntimeException(e);
         }
 
+        World world = Bukkit.getWorld("world");
+        assert world != null;
+
         //Makes sure the command sender defo has permission to delete the region
         //Will then update the necessary database files and delete the region I.A.
         if(!regionData.getDeleted1().equals(senderUUID) && !regionData.getDeleted2().equals(senderUUID)){
@@ -86,6 +96,7 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
                     Boolean recordDeleteWorked = removeRecord();
                     if(regionDeleteWorked && recordDeleteWorked){
                         player.sendMessage("§2Region and Record successfully deleted!");
+                        player.teleport(new Location(world, blockPoint.getxPos(), blockPoint.getyPos(), blockPoint.getzPos()));
                     }else{
                         player.sendMessage("§4Region did not delete successfully!");
                     }
@@ -93,6 +104,7 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
                     Boolean dataBaseUpdated = removeDeletionTag();
                     if(dataBaseUpdated){
                         player.sendMessage("§2Success in resetting record, region now set as unchecked!");
+                        player.teleport(new Location(world, blockPoint.getxPos(), blockPoint.getyPos(), blockPoint.getzPos()));
                     }
                 }
             }else{

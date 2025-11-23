@@ -53,8 +53,10 @@ public class nextDeleteRegion implements CommandExecutor {
                         rs.getString("status"));
             }
         } catch (SQLException e) {
+            databaseConnection = databaseManager.getConnection();
             e.printStackTrace();
         } catch (Exception e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
         commandSender.sendMessage("§3Next Region: " + regionData.getName());
@@ -70,6 +72,7 @@ public class nextDeleteRegion implements CommandExecutor {
         try {
             Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
 

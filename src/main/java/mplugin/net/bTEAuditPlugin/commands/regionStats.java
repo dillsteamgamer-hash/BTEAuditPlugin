@@ -38,6 +38,7 @@ public class regionStats implements CommandExecutor {
             ResultSet rs = ps.executeQuery();
             totalRegions = rs.getInt("count");
         } catch (SQLException e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
         try{
@@ -45,6 +46,7 @@ public class regionStats implements CommandExecutor {
             ResultSet rs = ps.executeQuery();
             totalMFD1 = rs.getInt("count");
         } catch (SQLException e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
         try{
@@ -52,6 +54,7 @@ public class regionStats implements CommandExecutor {
             ResultSet rs = ps.executeQuery();
             totalMFD2 = rs.getInt("count");
         } catch (SQLException e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
 
@@ -79,6 +82,7 @@ public class regionStats implements CommandExecutor {
             ResultSet rs = ps.executeQuery();
             return  rs.getInt("count");
         } catch (SQLException e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
     }

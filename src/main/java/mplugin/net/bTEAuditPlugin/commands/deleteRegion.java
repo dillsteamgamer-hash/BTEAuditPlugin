@@ -78,8 +78,10 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
                 regionData.setDeleted2(rs.getString("deleted2"));
             }
         } catch (SQLException e) {
+            databaseConnection = databaseManager.getConnection();
             e.printStackTrace();
         } catch (Exception e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
 
@@ -149,6 +151,7 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
     }
@@ -160,6 +163,7 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
+            databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
     }

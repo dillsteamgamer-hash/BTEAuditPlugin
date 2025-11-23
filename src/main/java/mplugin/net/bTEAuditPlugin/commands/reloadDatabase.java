@@ -79,6 +79,7 @@ public class reloadDatabase implements CommandExecutor {
                 ps.setString(4, "Unchecked");
                 ps.executeUpdate();
             } catch (SQLException e) {
+                databaseConnection = databaseManager.getConnection();
                 System.out.println("§4Fail to add region to database!" + e);
                 commandSender.sendMessage("§4Error in adding a region to the database, see console for more info");
             }

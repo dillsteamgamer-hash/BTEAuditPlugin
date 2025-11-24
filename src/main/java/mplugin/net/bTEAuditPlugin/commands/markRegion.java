@@ -121,28 +121,33 @@ public class markRegion implements CommandExecutor, TabCompleter {
                     commandSender.sendMessage(markAsHavingProgressMessage);
                 }
 
+
                 //Updates the database using the new attributes defined in the regionData object
-                try (PreparedStatement ps = databaseConnection.prepareStatement("UPDATE regions SET status = ?, deleted1 = ?, deleted2 = ? WHERE name = ?")) {
-                    ps.setString(1, regionData.getStatus());
-                    ps.setString(2, regionData.getDeleted1());
-                    ps.setString(3, regionData.getDeleted2());
-                    ps.setString(4, regionData.getName());
-                    ps.executeUpdate();
-                    commandSender.sendMessage("§2Success in updating database!");
-                } catch (SQLException e) {
-                    databaseConnection = databaseManager.getConnection();
-                    commandSender.sendMessage("§4Error in updating database!");
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    databaseConnection = databaseManager.getConnection();
-                    commandSender.sendMessage("§4Error in updating database!");
-                    throw new RuntimeException(e);
-                }
-                Boolean deletionSuccessful = deleteVoidRegion();
-                if (deletionSuccessful) {
-                    player.sendMessage("§2Success in deleting the region copy!");
-                } else {
-                    player.sendMessage("§4And error has occurred in deleting the region copy!");
+                if(args[0].equals("MFD") || args[0].equals("HP")) {
+                    try (PreparedStatement ps = databaseConnection.prepareStatement("UPDATE regions SET status = ?, deleted1 = ?, deleted2 = ? WHERE name = ?")) {
+                        ps.setString(1, regionData.getStatus());
+                        ps.setString(2, regionData.getDeleted1());
+                        ps.setString(3, regionData.getDeleted2());
+                        ps.setString(4, regionData.getName());
+                        ps.executeUpdate();
+                        commandSender.sendMessage("§2Success in updating database!");
+                    } catch (SQLException e) {
+                        databaseConnection = databaseManager.getConnection();
+                        commandSender.sendMessage("§4Error in updating database!");
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        databaseConnection = databaseManager.getConnection();
+                        commandSender.sendMessage("§4Error in updating database!");
+                        throw new RuntimeException(e);
+                    }
+                    Boolean deletionSuccessful = deleteVoidRegion();
+                    if (deletionSuccessful) {
+                        player.sendMessage("§2Success in deleting the region copy!");
+                    } else {
+                        player.sendMessage("§4And error has occurred in deleting the region copy!");
+                    }
+                }else{
+                    commandSender.sendMessage("§4Invalid argument! Select from 'MFD'(Marked For Deletion) or 'HP'(Has Progress)");
                 }
             } else {
                 commandSender.sendMessage("§4Invalid argument! Select from 'MFD'(Marked For Deletion) or 'HP'(Has Progress)");

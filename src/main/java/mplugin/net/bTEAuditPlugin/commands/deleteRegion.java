@@ -95,9 +95,9 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
             if(args.length == 1){
                 if(args[0].equals("yes")){
                     Boolean regionDeleteWorked = initDeleteRegion();
-                    Boolean recordDeleteWorked = removeRecord();
+                    Boolean recordDeleteWorked = updateRecordDeleted();
                     if(regionDeleteWorked && recordDeleteWorked){
-                        player.sendMessage("§2Region and Record successfully deleted!");
+                        player.sendMessage("§2Region Deleted and Record successfully updated!");
                         player.teleport(new Location(world, blockPoint.getxPos(), blockPoint.getyPos(), blockPoint.getzPos()));
                     }else{
                         player.sendMessage("§4Region did not delete successfully!");
@@ -156,9 +156,9 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
         }
     }
 
-    private Boolean removeRecord(){
+    private Boolean updateRecordDeleted(){
         try{
-            PreparedStatement ps = databaseConnection.prepareStatement("DELETE FROM regions WHERE name=?");
+            PreparedStatement ps = databaseConnection.prepareStatement("UPDATE regions SET status='deleted' WHERE name=?");
             ps.setString(1, regionData.getName());
             ps.executeUpdate();
             return true;

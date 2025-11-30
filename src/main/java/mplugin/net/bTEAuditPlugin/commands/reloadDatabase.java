@@ -71,7 +71,16 @@ public class reloadDatabase implements CommandExecutor {
         //Uses the list of regionData to add the necessary data to the database
         commandSender.sendMessage("§2Found all regions! Adding regions to Database!");
         for(RegionData regionData : regionDataList){
-            String sql = "INSERT OR IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";
+            String sql;
+            try {
+                if(databaseConnection.getMetaData().getDriverName().equalsIgnoreCase("sqlite jdbc")) {
+                    sql = "INSERT OR IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";
+                }else{
+                    sql = "INSERT IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             try {
                 PreparedStatement ps = databaseConnection.prepareStatement(sql);
                 ps.setString(1, regionData.getName());

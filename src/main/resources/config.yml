@@ -8,3 +8,9 @@ Mark-For-Deletion-TP-Z: 0
 
 #This should be the name of the world which has all the progress on (default 'world')
 Earth-World-Name: world
+
+#Use a custom DataBase, if false will use a file
+Use-Custom-DB: false
+Custom-DB-URL: ---
+Custom-DB-Username: ---
+Custom-DB-Password: ---

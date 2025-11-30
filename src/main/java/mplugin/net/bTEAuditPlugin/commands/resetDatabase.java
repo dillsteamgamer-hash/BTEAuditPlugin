@@ -28,7 +28,7 @@ public class resetDatabase implements CommandExecutor {
         databaseManager.initDatabase();
         databaseConnection = databaseManager.getConnection();
 
-        String sql = "DROP TABLE 'regions'";
+        String sql = "DROP TABLE regions";
         try {
             Statement statement = databaseConnection.createStatement();
             statement.execute(sql);

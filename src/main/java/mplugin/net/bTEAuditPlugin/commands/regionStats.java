@@ -27,17 +27,19 @@ public class regionStats implements CommandExecutor {
         databaseManager.initDatabase();
         databaseConnection = databaseManager.getConnection();
 
-        int totalRegions;
-        int totalUnchecked;
-        int totalHP;
-        int totalMFD1;
-        int totalMFD2;
-        int totalDeleted;
+        int totalRegions = 0;
+        int totalUnchecked = 0;
+        int totalHP = 0;
+        int totalMFD1 = 0;
+        int totalMFD2 = 0;
+        int totalDeleted = 0;
 
         try{
             PreparedStatement ps = databaseConnection.prepareStatement("SELECT COUNT(*) AS count FROM regions");
             ResultSet rs = ps.executeQuery();
-            totalRegions = rs.getInt("count");
+            if(rs.next()) {
+                totalRegions = rs.getInt("count");
+            }
         } catch (SQLException e) {
             databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
@@ -45,7 +47,9 @@ public class regionStats implements CommandExecutor {
         try{
             PreparedStatement ps = databaseConnection.prepareStatement("SELECT COUNT(*) AS count FROM regions WHERE (deleted1 IS NOT NULL AND deleted2 IS NULL AND status='MFD')");
             ResultSet rs = ps.executeQuery();
-            totalMFD1 = rs.getInt("count");
+            if(rs.next()) {
+                totalMFD1 = rs.getInt("count");
+            }
         } catch (SQLException e) {
             databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
@@ -53,7 +57,9 @@ public class regionStats implements CommandExecutor {
         try{
             PreparedStatement ps = databaseConnection.prepareStatement("SELECT COUNT(*) AS count FROM regions WHERE (deleted1 IS NOT NULL AND deleted2 IS NOT NULL AND status='MFD')");
             ResultSet rs = ps.executeQuery();
-            totalMFD2 = rs.getInt("count");
+            if(rs.next()){
+                totalMFD2 = rs.getInt("count");
+            }
         } catch (SQLException e) {
             databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
@@ -82,10 +88,13 @@ public class regionStats implements CommandExecutor {
             PreparedStatement ps = databaseConnection.prepareStatement("SELECT COUNT(*) AS count FROM regions WHERE status=?");
             ps.setString(1,type);
             ResultSet rs = ps.executeQuery();
-            return  rs.getInt("count");
+            if(rs.next()){
+                return  rs.getInt("count");
+            }
         } catch (SQLException e) {
             databaseConnection = databaseManager.getConnection();
             throw new RuntimeException(e);
         }
+        return 0;
     }
 }

@@ -91,6 +91,9 @@ public class nextDeleteRegion implements CommandExecutor {
         player.teleport(new Location(voidWorld, blockX, y, blockZ));
         player.sendMessage("§3Teleported to region: " + regionData.getName());
 
+        player.setAllowFlight(true);
+        player.setFlying(true);
+
         databaseManager.closeDatabase();
         return false;
     }

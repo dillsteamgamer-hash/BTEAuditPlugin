@@ -61,7 +61,8 @@ public class DatabaseManager {
                                     z INTEGER,
                                     status VARCHAR(16),
                                     deleted1 VARCHAR(36),
-                                    deleted2 VARCHAR(36)
+                                    deleted2 VARCHAR(36),
+                                    deletedAdmin VARCHAR(36)
                                 )
                             """);
         } catch (SQLException e) {

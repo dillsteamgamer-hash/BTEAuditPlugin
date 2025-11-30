@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class markRegion implements CommandExecutor, TabCompleter {
     DatabaseManager databaseManager;
@@ -93,7 +94,7 @@ public class markRegion implements CommandExecutor, TabCompleter {
                 throw new RuntimeException(e);
             }
 
-            World world = Bukkit.getWorld("world");
+            World world = Bukkit.getWorld(Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name")));
             assert world != null;
 
             //Updates the regionData object to reflect the new attributes
@@ -108,7 +109,7 @@ public class markRegion implements CommandExecutor, TabCompleter {
                         regionData.setDeleted2(senderUUID);
                     } else {
                         commandSender.sendMessage("§4An error in marking the region for deletion has occurred!");
-                        System.out.println("§4Error in marking region as deleted, already has 2 mark for deletions!");
+                        plugin.getLogger().severe("§4Error in marking region as deleted, already has 2 mark for deletions!");
                     }
                 } else if (args[0].equals("HP")) {
                     regionData.setStatus("HP");

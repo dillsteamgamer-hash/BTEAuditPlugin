@@ -7,45 +7,54 @@ authors: [ Dillsteamgamer ]
 commands:
   #Tester Commands
   TPToWorld:
-    Description: Teleports the player to the void world
-    Permission: BTEAuditPlugin.Tester
+    description: Teleports the player to the void world
+    permission: BTEAuditPlugin.Tester
+    default: op
 
 
   #Auditor Commands
   nextRegion:
-    Description: Teleport too the next region to be audited
-    Permission: BTEAuditPlugin.Auditor
+    description: Teleport too the next region to be audited
+    permission: BTEAuditPlugin.Auditor
+    default: op
 
   markRegion:
-    Description: Marks the region status that is currently being reviewed
-    Permission: BTEAuditPlugin.Auditor
+    description: Marks the region status that is currently being reviewed
+    permission: BTEAuditPlugin.Auditor
+    default: op
 
 
   #Admin Commands
   nextDeleteRegion:
-    Description: TPs an Admin to the next world with 2 unique "Marked as for Deletion" authors
-    Permission: BTEAuditPlugin.deleteRegionFiles
+    description: TPs an Admin to the next world with 2 unique "Marked as for Deletion" authors
+    permission: BTEAuditPlugin.deleteRegionFiles
+    default: op
 
   deleteRegion:
-    Description: Deletes the region file only when 2 unique (non executing) users mark the region as for deletion
-    Permission: BTEAuditPlugin.deleteRegionFiles
+    description: Deletes the region file only when 2 unique (non executing) users mark the region as for deletion
+    permission: BTEAuditPlugin.deleteRegionFiles
+    default: op
 
 
   #Other Commands
   regionStats:
-    Description: Provides the breakdown of all the regions in the audit
-    Permission: BTEAuditPlugin.Status
+    description: Provides the breakdown of all the regions in the audit
+    permission: BTEAuditPlugin.Status
+    default: op
 
   auditHelp:
-    Description: Displays a list of all commands and a description of what they do as well as their arguments
-    Permission: BTEAuditPlugin.auditHelp
+    description: Displays a list of all commands and a description of what they do as well as their arguments
+    permission: BTEAuditPlugin.auditHelp
+    default: op
 
 
   #Other (Admin) Commands
   reloadDatabase:
-    Description: Updates the database with any new regions generated since last reload
-    Permission: BTEAuditPlugin.reloadDatabase
+    description: Updates the database with any new regions generated since last reload
+    permission: BTEAuditPlugin.reloadDatabase
+    default: op
 
   resetDatabase:
-    Description: Completely deletes the database, this should only ever be done in extreme scenarios, or a need of a new audit, must be followed by a new /reloadDatabase
-    Permission: BTEAuditManager.resetDatabase
+    description: Completely deletes the database, this should only ever be done in extreme scenarios, or a need of a new audit, must be followed by a new /reloadDatabase
+    permission: BTEAuditManager.resetDatabase
+    default: op

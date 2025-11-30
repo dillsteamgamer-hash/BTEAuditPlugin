@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.*;
+import java.util.Objects;
 
 public class nextDeleteRegion implements CommandExecutor {
     DatabaseManager databaseManager;
@@ -62,7 +63,7 @@ public class nextDeleteRegion implements CommandExecutor {
         commandSender.sendMessage("§3Next Region: " + regionData.getName());
 
         //Copies the region from overworld to audit world
-        File source = new File(Bukkit.getWorldContainer(), "world/region/r." + regionData.getX() + "." + regionData.getZ() + ".mca");
+        File source = new File(Bukkit.getWorldContainer(), (Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))) + "/region/r." + regionData.getX() + "." + regionData.getZ() + ".mca");
         File targetDir = new File(Bukkit.getWorldContainer(), "audit_world/region/");
         targetDir.mkdirs();
 

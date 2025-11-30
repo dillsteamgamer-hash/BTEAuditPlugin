@@ -32,12 +32,12 @@ public class DatabaseManager {
             try (Statement stmt = connection.createStatement()) {
                 stmt.execute("""
                     CREATE TABLE IF NOT EXISTS regions (
-                        name TEXT PRIMARY KEY,
+                        name VARCHAR(16) PRIMARY KEY,
                         x INTEGER,
                         z INTEGER,
-                        status TEXT,
-                        deleted1 TEXT,
-                        deleted2 TEXT
+                        status VARCHAR(16),
+                        deleted1 UUID,
+                        deleted2 UUID
                     )
                 """);
             }

@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class reloadDatabase implements CommandExecutor {
@@ -36,10 +37,10 @@ public class reloadDatabase implements CommandExecutor {
 
         ArrayList<String> overworldRegionFiles = new ArrayList<>();
         File worldContainer = Bukkit.getWorldContainer();
-        File regionFolder = new File(worldContainer, "world/region");
+        File regionFolder = new File(worldContainer, (Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))) + "/region");
 
         if (!regionFolder.exists() || !regionFolder.isDirectory()) {
-            System.out.println("§4Region folder not found at: " + regionFolder.getAbsolutePath());
+            plugin.getLogger().severe("§4Region folder not found at: " + regionFolder.getAbsolutePath());
             return false;
         }
 
@@ -80,7 +81,7 @@ public class reloadDatabase implements CommandExecutor {
                 ps.executeUpdate();
             } catch (SQLException e) {
                 databaseConnection = databaseManager.getConnection();
-                System.out.println("§4Fail to add region to database!" + e);
+                plugin.getLogger().severe("§4Fail to add region to database!" + e);
                 commandSender.sendMessage("§4Error in adding a region to the database, see console for more info");
             }
         }

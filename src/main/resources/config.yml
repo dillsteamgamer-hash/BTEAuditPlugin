@@ -5,3 +5,6 @@ Mark-Progress-Message: "§3Please run \"/build add\" to add any new builds not a
 Mark-For-Deletion-TP-X: 0
 Mark-For-Deletion-TP-Y: 0
 Mark-For-Deletion-TP-Z: 0
+
+#This should be the name of the world which has all the progress on (default 'world')
+Earth-World-Name: world

@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class deleteRegion implements CommandExecutor, TabCompleter {
     DatabaseManager databaseManager;
@@ -85,7 +86,7 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
             throw new RuntimeException(e);
         }
 
-        World world = Bukkit.getWorld("world");
+        World world = Bukkit.getWorld(Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name")));
         assert world != null;
 
         //Makes sure the command sender defo has permission to delete the region
@@ -134,9 +135,9 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
 
 
     private Boolean initDeleteRegion(){
-        File regionFile = new File("world/region/" + regionData.getName());
+        File regionFile = new File((Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))) + "/region/" + regionData.getName());
         if(!regionFile.exists()){
-            System.out.println("Error in finding region file in world!");
+            plugin.getLogger().severe("Error in finding region file in " + (Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))) + "!");
             return false;
         }else{
             return regionFile.delete();

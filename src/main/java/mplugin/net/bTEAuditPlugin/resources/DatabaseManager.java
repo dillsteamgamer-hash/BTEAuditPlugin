@@ -56,7 +56,7 @@ public class DatabaseManager {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("""
                                 CREATE TABLE IF NOT EXISTS regions (
-                                    name VARCHAR(16) PRIMARY KEY,
+                                    name VARCHAR(25) PRIMARY KEY,
                                     x INTEGER,
                                     z INTEGER,
                                     status VARCHAR(16),

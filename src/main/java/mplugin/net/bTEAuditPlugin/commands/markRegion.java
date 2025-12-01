@@ -101,7 +101,7 @@ public class markRegion implements CommandExecutor, TabCompleter {
             if (args.length == 1) {
                 if (args[0].equals("MFD")) {
                     commandSender.sendMessage("§3Sending to build world!");
-                    player.teleport(new Location(world, teleportBlock.getxPos(), teleportBlock.getyPos(), teleportBlock.getyPos()));
+                    player.teleport(new Location(world, teleportBlock.getxPos(), teleportBlock.getyPos(), teleportBlock.getzPos()));
                     regionData.setStatus("MFD");
                     if (regionData.getDeleted1() == null) {
                         regionData.setDeleted1(senderUUID);

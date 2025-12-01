@@ -87,10 +87,10 @@ public class markRegion implements CommandExecutor, TabCompleter {
                     regionData.setDeleted2(rs.getString("deleted2"));
                 }
             } catch (SQLException e) {
-                databaseConnection = databaseManager.getConnection();
+                databaseManager.closeDatabase();
                 e.printStackTrace();
             } catch (Exception e) {
-                databaseConnection = databaseManager.getConnection();
+                databaseManager.closeDatabase();
                 throw new RuntimeException(e);
             }
 
@@ -133,11 +133,11 @@ public class markRegion implements CommandExecutor, TabCompleter {
                         ps.executeUpdate();
                         commandSender.sendMessage("§2Success in updating database!");
                     } catch (SQLException e) {
-                        databaseConnection = databaseManager.getConnection();
+                        databaseManager.closeDatabase();
                         commandSender.sendMessage("§4Error in updating database!");
                         e.printStackTrace();
                     } catch (Exception e) {
-                        databaseConnection = databaseManager.getConnection();
+                        databaseManager.closeDatabase();
                         commandSender.sendMessage("§4Error in updating database!");
                         throw new RuntimeException(e);
                     }

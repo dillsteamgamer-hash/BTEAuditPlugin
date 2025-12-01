@@ -2,10 +2,12 @@ package mplugin.net.bTEAuditPlugin;
 
 import mplugin.net.bTEAuditPlugin.commands.*;
 import mplugin.net.bTEAuditPlugin.resources.*;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
+import java.io.File;
 import java.util.Objects;
 
 
@@ -18,6 +20,9 @@ public final class BTEAuditPlugin extends JavaPlugin {
         database = new DatabaseManager(this);
         database.initDatabase();
         getLogger().info("Creating void world...");
+
+        //Deletes the files in audit_world folder
+        deleteFileRecursively(new File(Bukkit.getWorldContainer(), "audit_world/region/"));
 
 
         //Creates the voidWorld
@@ -63,5 +68,17 @@ public final class BTEAuditPlugin extends JavaPlugin {
     @Override
     public void onLoad(){
         saveDefaultConfig();
+    }
+
+    public static void deleteFileRecursively(File file) {
+        if (file.isDirectory()) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    deleteFileRecursively(child);
+                }
+            }
+        }
+        file.delete();
     }
 }

@@ -2,9 +2,11 @@ package mplugin.net.bTEAuditPlugin.commands;
 
 import mplugin.net.bTEAuditPlugin.resources.DatabaseManager;
 import mplugin.net.bTEAuditPlugin.resources.RegionData;
+import mplugin.net.bTEAuditPlugin.resources.VoidWorldGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -51,7 +53,11 @@ public class nextDeleteRegion implements CommandExecutor {
                         rs.getString("name"),
                         rs.getInt("x"),
                         rs.getInt("z"),
-                        rs.getString("status"));
+                        rs.getString("status")
+                );
+            }else{
+                player.sendMessage("§3There are no regions which need the final go-ahead!");
+                return true;
             }
         } catch (SQLException e) {
             databaseConnection = databaseManager.getConnection();
@@ -62,22 +68,43 @@ public class nextDeleteRegion implements CommandExecutor {
         }
         commandSender.sendMessage("§3Next Region: " + regionData.getName());
 
-        //Copies the region from overworld to audit world
-        File source = new File(Bukkit.getWorldContainer(), (Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))) + "/region/r." + regionData.getX() + "." + regionData.getZ() + ".mca");
+        World auditWorld = Bukkit.getWorld("audit_world");
+        //Teleport players out of audit_world
+        if (auditWorld != null) {
+            for (Player p : auditWorld.getPlayers()) {
+                p.teleport(new Location(Bukkit.getWorld(Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))), p.getX(), p.getY(), p.getZ()));
+                p.sendMessage("World has been emptied, only 1 person can audit at a time!");
+            }
+
+            // Unload the world
+            Bukkit.unloadWorld(auditWorld, false);
+        }
+
+
+        // Reload the audit world
+        WorldCreator creator = new WorldCreator("audit_world");
+        creator.generator(new VoidWorldGenerator());
+        World world = creator.createWorld();
+        if (world != null) {
+            plugin.getLogger().info("Void world created successfully: " + world.getName());
+        } else {
+            plugin.getLogger().warning("Failed to create void world!");
+        }
+
+        //Copy region file to audit_world
+        File source = new File(Bukkit.getWorldContainer(), plugin.getConfig().getString("Earth-World-Name") + "/region/" + regionData.getName());
         File targetDir = new File(Bukkit.getWorldContainer(), "audit_world/region/");
         targetDir.mkdirs();
-
         File target = new File(targetDir, source.getName());
-
-
         try {
             Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            databaseConnection = databaseManager.getConnection();
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            player.sendMessage("§cFailed to copy region file!");
+            databaseManager.closeDatabase();
+            return true;
         }
-
-        commandSender.sendMessage("§3Copied Region Data to Audit World");
+        player.sendMessage("§3Copied Region Data to Audit World");
 
         //TPs player to the centre of the copy of the region in the audit world
         int blockX = regionData.getX() * 512 + 256;

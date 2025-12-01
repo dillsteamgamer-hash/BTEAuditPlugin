@@ -11,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -112,11 +113,13 @@ public class nextRegion implements CommandExecutor {
         assert world != null;
         int y = world.getHighestBlockYAt(blockX, blockZ);
 
-        player.teleport(new Location(world, blockX, y, blockZ));
+        player.teleport(new Location(world, blockX, y + 5, blockZ));
         player.sendMessage("§3Teleported to region: " + regionData.getName());
 
         player.setAllowFlight(true);
         player.setFlying(true);
+
+        player.setMetadata("currentAudit", new FixedMetadataValue(plugin, regionData.getName()));
 
         databaseManager.closeDatabase();
         return true;

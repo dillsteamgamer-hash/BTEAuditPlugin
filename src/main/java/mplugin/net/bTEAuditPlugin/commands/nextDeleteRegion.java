@@ -11,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -115,8 +116,10 @@ public class nextDeleteRegion implements CommandExecutor {
 
         int y = voidWorld.getHighestBlockYAt(blockX, blockZ);
 
-        player.teleport(new Location(voidWorld, blockX, y, blockZ));
+        player.teleport(new Location(voidWorld, blockX, y + 5, blockZ));
         player.sendMessage("§3Teleported to region: " + regionData.getName());
+
+        player.setMetadata("currentAudit", new FixedMetadataValue(plugin, regionData.getName()));
 
         player.setAllowFlight(true);
         player.setFlying(true);

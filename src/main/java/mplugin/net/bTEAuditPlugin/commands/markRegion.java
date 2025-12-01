@@ -55,20 +55,14 @@ public class markRegion implements CommandExecutor, TabCompleter {
 
             String senderUUID = String.valueOf(player.getUniqueId());
 
-            int xPosition = player.getLocation().getBlockX();
-            int yPosition = player.getLocation().getBlockY();
-            int zPosition = player.getLocation().getBlockZ();
-
-
-            // Convert block coordinates to chunk coordinates
-            int chunkX = xPosition >> 4;
-            int chunkZ = zPosition >> 4;
-
-            // Convert chunk coordinates to region coordinates
-            int regionX = Math.floorDiv(chunkX, 32);
-            int regionZ = Math.floorDiv(chunkZ, 32);
-
-            String regionName = "r." + regionX + "." + regionZ + ".mca";
+            String regionName = "";
+            if(player.hasMetadata("currentAudit")){
+                regionName = player.getMetadata("currentAudit").getFirst().asString();
+                player.removeMetadata("currentAudit", plugin);
+            }else{
+                player.sendMessage("§4You are not in audit mode!");
+                return false;
+            }
 
             commandSender.sendMessage("§3Current Region: " + regionName);
 
@@ -118,7 +112,7 @@ public class markRegion implements CommandExecutor, TabCompleter {
 
 
                     commandSender.sendMessage("§3Teleporting to build world");
-                    player.teleport(new Location(world, xPosition, yPosition, zPosition));
+                    player.teleport(new Location(world, player.getX(), player.getY(), player.getZ()));
                     commandSender.sendMessage(markAsHavingProgressMessage);
                 }
 

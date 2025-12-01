@@ -50,19 +50,14 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
         Player player = (Player) commandSender;
         String senderUUID = String.valueOf(player.getUniqueId());
 
-        int xPosition = player.getLocation().getBlockX();
-        int zPosition = player.getLocation().getBlockZ();
-
-
-        // Convert block coordinates to chunk coordinates
-        int chunkX = xPosition >> 4;
-        int chunkZ = zPosition >> 4;
-
-        // Convert chunk coordinates to region coordinates
-        int regionX = Math.floorDiv(chunkX, 32);
-        int regionZ = Math.floorDiv(chunkZ, 32);
-
-        String regionName = "r." + regionX + "." + regionZ + ".mca";
+        String regionName = "";
+        if(player.hasMetadata("currentAudit")){
+            regionName = player.getMetadata("currentAudit").getFirst().asString();
+            player.removeMetadata("currentAudit", plugin);
+        }else{
+            player.sendMessage("§4You are not in audit mode!");
+            return false;
+        }
         commandSender.sendMessage("§3Current Region: " + regionName);
 
         //Just creates an object of regionData from the database

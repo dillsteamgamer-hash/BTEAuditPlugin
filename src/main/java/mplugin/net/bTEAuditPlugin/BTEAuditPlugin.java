@@ -54,6 +54,7 @@ public final class BTEAuditPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("markRegion")).setExecutor(new markRegion(this, returnPoint, markAsHavingProgressMessage));
         //Other Commands
         Objects.requireNonNull(getCommand("regionStats")).setExecutor(new regionStats(this));
+        Objects.requireNonNull(getCommand("reloadDatabaseWithAutodelete")).setExecutor(new reloadDatabaseWithAutodelete(this));
     }
 
 

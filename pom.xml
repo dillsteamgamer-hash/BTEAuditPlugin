@@ -75,6 +75,10 @@
             <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
     </repositories>
 
     <dependencyManagement>
@@ -91,16 +95,20 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.21.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <groupId>com.github.querz</groupId>
+            <artifactId>NBT</artifactId>
+            <version>6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.pepsoft.jnbt</groupId>
+            <artifactId>JNBT</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
-            <groupId>com.github.BTEUK</groupId>
-            <artifactId>Network</artifactId>
-            <version>c8a9ff8b97</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.21.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

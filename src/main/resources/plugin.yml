@@ -56,5 +56,10 @@ commands:
 
   resetDatabase:
     description: Completely deletes the database, this should only ever be done in extreme scenarios, or a need of a new audit, must be followed by a new /reloadDatabase
-    permission: BTEAuditManager.resetDatabase
+    permission: BTEAuditPlugin.resetDatabase
+    default: op
+
+  reloadDatabaseWithAutodelete:
+    description: Updates the database with all regions, deleting those that have never been inhabited
+    permission: BTEAuditPlugin.reloadDatabase
     default: op

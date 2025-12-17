@@ -16,10 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
 public class reloadDatabase implements CommandExecutor {
-    private DatabaseManager databaseManager;
-    private Connection databaseConnection;
 
     private final JavaPlugin plugin;
 
@@ -27,81 +24,97 @@ public class reloadDatabase implements CommandExecutor {
         this.plugin = plugin;
     }
 
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
-        databaseManager = new DatabaseManager(plugin);
-        databaseManager.initDatabase();
-        databaseConnection = databaseManager.getConnection();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
+            DatabaseManager databaseManager = new DatabaseManager(plugin);
+            databaseManager.initDatabase();
+            Connection databaseConnection = databaseManager.getConnection();
 
-        ArrayList<String> overworldRegionFiles = new ArrayList<>();
-        File worldContainer = Bukkit.getWorldContainer();
-        File regionFolder = new File(worldContainer, (Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))) + "/region");
+            ArrayList<String> overworldRegionFiles = new ArrayList<>();
 
-        if (!regionFolder.exists() || !regionFolder.isDirectory()) {
-            plugin.getLogger().severe("§4Region folder not found at: " + regionFolder.getAbsolutePath());
-            return false;
-        }
+            File worldContainer = Bukkit.getWorldContainer();
+            File regionFolder = new File(
+                    worldContainer,
+                    Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name")) + "/region"
+            );
 
-        //This may crash servers, will need to look into optimising/what listFiles() actually stores
-        File[] files = regionFolder.listFiles((dir, name) -> name.endsWith(".mca"));
-        if (files == null) return false;
+            if (!regionFolder.exists() || !regionFolder.isDirectory()) {
+                Bukkit.getScheduler().runTask(plugin, () ->
+                        plugin.getLogger().severe("§4Region folder not found at: " + regionFolder.getAbsolutePath())
+                );
+                databaseManager.closeDatabase();
+                return;
+            }
 
-        // Add all filenames to the ArrayList
-        for (File file : files) {
-            overworldRegionFiles.add(file.getName());
-        }
+            File[] files = regionFolder.listFiles((dir, name) -> name.endsWith(".mca"));
+            if (files == null) {
+                databaseManager.closeDatabase();
+                return;
+            }
 
-        ArrayList<RegionData> regionDataList = new ArrayList<>();
+            for (File file : files) {
+                overworldRegionFiles.add(file.getName());
+            }
 
-        //Adds the regionData to a list
-        commandSender.sendMessage("§2Found filepath! Finding regions!");
-        for(String file : overworldRegionFiles){
-            String name = file;
-            file = file.substring(2);
+            ArrayList<RegionData> regionDataList = new ArrayList<>();
 
-            int xPos = Integer.parseInt(file.substring(0, file.indexOf(".")));
-            file = file.substring(file.indexOf(".") + 1);
-            int zPos = Integer.parseInt(file.substring(0, file.indexOf(".")));
+            Bukkit.getScheduler().runTask(plugin, () ->
+                    commandSender.sendMessage("§2Found filepath! Finding regions!")
+            );
 
+            for (String file : overworldRegionFiles) {
+                String name = file;
+                file = file.substring(2);
 
-            regionDataList.add(new RegionData(name, xPos, zPos, "Unchecked"));
-        }
-        //Uses the list of regionData to add the necessary data to the database
-        commandSender.sendMessage("§2Found all regions! Adding regions to Database!");
-        for(RegionData regionData : regionDataList){
-            String sql;
-            try {
-                if(databaseConnection.getMetaData().getDriverName().equalsIgnoreCase("sqlite jdbc")) {
-                    sql = "INSERT OR IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";
-                }else{
-                    sql = "INSERT IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";
+                int xPos = Integer.parseInt(file.substring(0, file.indexOf(".")));
+                file = file.substring(file.indexOf(".") + 1);
+                int zPos = Integer.parseInt(file.substring(0, file.indexOf(".")));
+
+                regionDataList.add(new RegionData(name, xPos, zPos, "Unchecked"));
+            }
+
+            Bukkit.getScheduler().runTask(plugin, () ->
+                    commandSender.sendMessage("§2Found all regions! Adding regions to Database!")
+            );
+
+            for (RegionData regionData : regionDataList) {
+                String sql;
+
+                try {
+                    if (databaseConnection.getMetaData().getDriverName().equalsIgnoreCase("sqlite jdbc")) {
+                        sql = "INSERT OR IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";
+                    } else {
+                        sql = "INSERT IGNORE INTO regions (name, x, z, status) VALUES (?, ?, ?, ?)";
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+
+                try (PreparedStatement ps = databaseConnection.prepareStatement(sql)) {
+                    ps.setString(1, regionData.getName());
+                    ps.setInt(2, regionData.getX());
+                    ps.setInt(3, regionData.getZ());
+                    ps.setString(4, "Unchecked");
+                    ps.executeUpdate();
+                } catch (SQLException e) {
+                    databaseConnection = databaseManager.getConnection();
+                    Bukkit.getScheduler().runTask(plugin, () -> {
+                        plugin.getLogger().severe("§4Fail to add region to database!" + e);
+                        commandSender.sendMessage("§4Error in adding a region to the database, see console for more info");
+                    });
+                }
             }
-            try {
-                PreparedStatement ps = databaseConnection.prepareStatement(sql);
-                ps.setString(1, regionData.getName());
-                ps.setInt(2, regionData.getX());
-                ps.setInt(3, regionData.getZ());
-                ps.setString(4, "Unchecked");
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                databaseConnection = databaseManager.getConnection();
-                plugin.getLogger().severe("§4Fail to add region to database!" + e);
-                commandSender.sendMessage("§4Error in adding a region to the database, see console for more info");
-            }
-        }
 
-        commandSender.sendMessage("§2Successfully added all regions to the database!");
-        commandSender.sendMessage("§2Finished reloading the database!");
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                commandSender.sendMessage("§2Successfully added all regions to the database!");
+                commandSender.sendMessage("§2Finished reloading the database!");
+            });
 
+            databaseManager.closeDatabase();
+        });
 
-
-        databaseManager.closeDatabase();
         return false;
     }
 }
-

@@ -95,7 +95,12 @@ public class reloadDatabaseWithAutodelete implements CommandExecutor {
 
                     if (total == 0) {
                         ps.setString(4, "AutoDeleted");
-                        regionFile.delete();
+                        if(plugin.getConfig().getBoolean("Testing-Mode")){
+                            plugin.getLogger().info("Region " + regionData.getName() + " would be autodeleted!");
+                        }else{
+                            plugin.getLogger().info("Region " + regionData.getName() + " would NOT be autodeleted!");
+                            regionFile.delete();
+                        }
                     } else if(total > 0){
                         ps.setString(4, "Unchecked");
                     } else if(total == -1){

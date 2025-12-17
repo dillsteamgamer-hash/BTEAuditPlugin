@@ -17,11 +17,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,7 +52,7 @@ public class markRegion implements CommandExecutor, TabCompleter {
         Player player = (Player) commandSender;
 
         World currentWorld = player.getWorld();
-        if (currentWorld.getName().equals("audit_world")) {
+        if (currentWorld.getName().startsWith("audit_world_")) {
             databaseManager = new DatabaseManager(plugin);
             databaseManager.initDatabase();
             databaseConnection = databaseManager.getConnection();
@@ -135,7 +139,10 @@ public class markRegion implements CommandExecutor, TabCompleter {
                         commandSender.sendMessage("§4Error in updating database!");
                         throw new RuntimeException(e);
                     }
-                    Boolean deletionSuccessful = deleteVoidRegion();
+                    World auditWorld = Bukkit.getWorld("audit_world_" + player.getName());
+                    assert auditWorld != null;
+                    Bukkit.unloadWorld(auditWorld, false);
+                    Boolean deletionSuccessful = deleteAuditWorlds(player);
                     if (deletionSuccessful) {
                         player.sendMessage("§2Success in deleting the region copy!");
                     } else {
@@ -156,16 +163,6 @@ public class markRegion implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    //Deletes the copy of the region in the void/audit world
-     private Boolean deleteVoidRegion(){
-        File regionFile = new File("audit_world/region/" + regionData.getName());
-        if(!regionFile.exists()){
-            System.out.println("§4Error in finding region file in audit_world!");
-            return false;
-        }else{
-            return regionFile.delete();
-        }
-    }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
@@ -176,5 +173,53 @@ public class markRegion implements CommandExecutor, TabCompleter {
         }
 
         return validArgs;
+    }
+
+
+    private boolean deleteAuditWorlds(Player player) {
+        File worldContainer = Bukkit.getWorldContainer();
+
+        File[] files = worldContainer.listFiles();
+        if (files == null) {
+            plugin.getLogger().warning("World container is empty or inaccessible.");
+            return false;
+        }
+
+        for (File file : files) {
+            if (!file.isDirectory()) continue;
+
+            String name = file.getName();
+            if (!name.equals("audit_world_" + player.getName())) continue;
+
+            if (Bukkit.getWorld(name) != null) {
+                plugin.getLogger().warning("World " + name + " is loaded — skipping deletion.");
+                continue;
+            }
+
+            try {
+                deleteRecursively(file.toPath());
+                plugin.getLogger().info("Deleted audit world: " + name);
+                return true;
+            } catch (IOException e) {
+                plugin.getLogger().severe("Failed to delete world " + name);
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    private void deleteRecursively(Path path) throws IOException {
+        if (!Files.exists(path)) return;
+
+        Files.walk(path)
+                .sorted(Comparator.reverseOrder())
+                .forEach(p -> {
+                    try {
+                        Files.delete(p);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed deleting " + p, e);
+                    }
+                });
     }
 }

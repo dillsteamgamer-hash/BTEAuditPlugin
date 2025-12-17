@@ -69,7 +69,7 @@ public class nextRegion implements CommandExecutor {
         player.sendMessage("§3Next Region: " + regionData.getName());
 
 
-        World auditWorld = Bukkit.getWorld("audit_world");
+        World auditWorld = Bukkit.getWorld("audit_world_" + player.getName());
         //Teleport players out of audit_world
         if (auditWorld != null) {
             for (Player p : auditWorld.getPlayers()) {
@@ -83,7 +83,7 @@ public class nextRegion implements CommandExecutor {
 
 
         // Reload the audit world
-        WorldCreator creator = new WorldCreator("audit_world");
+        WorldCreator creator = new WorldCreator("audit_world_" + player.getName());
         creator.generator(new VoidWorldGenerator());
         World world = creator.createWorld();
         if (world != null) {
@@ -94,7 +94,7 @@ public class nextRegion implements CommandExecutor {
 
         //Copy region file to audit_world
         File source = new File(Bukkit.getWorldContainer(), plugin.getConfig().getString("Earth-World-Name") + "/region/" + regionData.getName());
-        File targetDir = new File(Bukkit.getWorldContainer(), "audit_world/region/");
+        File targetDir = new File(Bukkit.getWorldContainer(), "audit_world_" + player.getName() + "/region/");
         targetDir.mkdirs();
         File target = new File(targetDir, source.getName());
         try {

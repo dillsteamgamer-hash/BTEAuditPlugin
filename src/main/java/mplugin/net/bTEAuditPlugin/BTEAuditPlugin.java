@@ -8,6 +8,10 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Objects;
 
 
@@ -19,12 +23,12 @@ public final class BTEAuditPlugin extends JavaPlugin {
     public void onEnable() {
         database = new DatabaseManager(this);
         database.initDatabase();
-        getLogger().info("Creating void world...");
 
-        //Deletes the files in audit_world folder
-        deleteFileRecursively(new File(Bukkit.getWorldContainer(), "audit_world/region/"));
+        //Deletes the files in audit_world_xyz folders
+        deleteAuditWorlds();
 
 
+        /*
         //Creates the voidWorld
         WorldCreator creator = new WorldCreator("audit_world");
         creator.generator(new VoidWorldGenerator());
@@ -34,6 +38,7 @@ public final class BTEAuditPlugin extends JavaPlugin {
         } else {
             getLogger().warning("Failed to create void world!");
         }
+        */
 
         //Reads from config file
         BlockPoint returnPoint = new BlockPoint(getConfig().getInt("Mark-For-Deletion-TP-X"), getConfig().getInt("Mark-For-Deletion-TP-Y"), getConfig().getInt("Mark-For-Deletion-TP-Z"));
@@ -71,15 +76,49 @@ public final class BTEAuditPlugin extends JavaPlugin {
         saveDefaultConfig();
     }
 
-    public static void deleteFileRecursively(File file) {
-        if (file.isDirectory()) {
-            File[] children = file.listFiles();
-            if (children != null) {
-                for (File child : children) {
-                    deleteFileRecursively(child);
-                }
+
+    private void deleteAuditWorlds() {
+        File worldContainer = Bukkit.getWorldContainer();
+
+        File[] files = worldContainer.listFiles();
+        if (files == null) {
+            getLogger().warning("World container is empty or inaccessible.");
+            return;
+        }
+
+        for (File file : files) {
+            if (!file.isDirectory()) continue;
+
+            String name = file.getName();
+            if (!name.startsWith("audit_world")) continue;
+
+            // Safety check: make sure it's not loaded
+            if (Bukkit.getWorld(name) != null) {
+                getLogger().warning("World " + name + " is loaded — skipping deletion.");
+                continue;
+            }
+
+            try {
+                deleteRecursively(file.toPath());
+                getLogger().info("Deleted audit world: " + name);
+            } catch (IOException e) {
+                getLogger().severe("Failed to delete world " + name);
+                e.printStackTrace();
             }
         }
-        file.delete();
+    }
+
+    private void deleteRecursively(Path path) throws IOException {
+        if (!Files.exists(path)) return;
+
+        Files.walk(path)
+                .sorted(Comparator.reverseOrder())
+                .forEach(p -> {
+                    try {
+                        Files.delete(p);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed deleting " + p, e);
+                    }
+                });
     }
 }

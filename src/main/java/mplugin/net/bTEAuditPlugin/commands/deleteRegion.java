@@ -17,11 +17,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -88,13 +92,17 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
         //Will then update the necessary database files and delete the region I.A.
         if(!regionData.getDeleted1().equals(senderUUID) && !regionData.getDeleted2().equals(senderUUID)){
             player.sendMessage("§2Has command access!");
+            player.teleport(new Location(world, blockPoint.getxPos(), blockPoint.getyPos(), blockPoint.getzPos()));
             if(args.length == 1){
                 if(args[0].equals("yes")){
-                    Boolean regionDeleteWorked = initDeleteRegion();
+                    World auditWorld = Bukkit.getWorld("audit_world_" + player.getName());
+                    assert auditWorld != null;
+                    Bukkit.unloadWorld(auditWorld, false);
+                    Boolean deletedAuditWorld = deleteAuditWorlds(player);
                     Boolean recordDeleteWorked = updateRecordDeleted(String.valueOf(player.getUniqueId()));
+                    Boolean regionDeleteWorked = initDeleteRegion();
                     if(regionDeleteWorked && recordDeleteWorked){
                         player.sendMessage("§2Region Deleted and Record successfully updated!");
-                        player.teleport(new Location(world, blockPoint.getxPos(), blockPoint.getyPos(), blockPoint.getzPos()));
                     }else{
                         player.sendMessage("§4Region did not delete successfully!");
                     }
@@ -128,7 +136,6 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
         return validArgs;
     }
 
-
     private Boolean initDeleteRegion(){
         File regionFile = new File((Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))) + "/region/" + regionData.getName());
         if(!regionFile.exists()){
@@ -137,6 +144,54 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
         }else{
             return regionFile.delete();
         }
+    }
+
+
+    private boolean deleteAuditWorlds(Player player) {
+        File worldContainer = Bukkit.getWorldContainer();
+
+        File[] files = worldContainer.listFiles();
+        if (files == null) {
+            plugin.getLogger().warning("World container is empty or inaccessible.");
+            return false;
+        }
+
+        for (File file : files) {
+            if (!file.isDirectory()) continue;
+
+            String name = file.getName();
+            if (!name.equals("audit_world_" + player.getName())) continue;
+
+            if (Bukkit.getWorld(name) != null) {
+                plugin.getLogger().warning("World " + name + " is loaded — skipping deletion.");
+                continue;
+            }
+
+            try {
+                deleteRecursively(file.toPath());
+                plugin.getLogger().info("Deleted audit world: " + name);
+                return true;
+            } catch (IOException e) {
+                plugin.getLogger().severe("Failed to delete world " + name);
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    private void deleteRecursively(Path path) throws IOException {
+        if (!Files.exists(path)) return;
+
+        Files.walk(path)
+                .sorted(Comparator.reverseOrder())
+                .forEach(p -> {
+                    try {
+                        Files.delete(p);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed deleting " + p, e);
+                    }
+                });
     }
 
     //When admin decides not to delete the region

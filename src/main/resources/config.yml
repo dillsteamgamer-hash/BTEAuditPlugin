@@ -17,3 +17,7 @@ Use-Custom-DB: false
 Custom-DB-URL: ---
 Custom-DB-Username: ---
 Custom-DB-Password: ---
+
+#For when world has been converted from Cubic Chunks to Vanilla at ANY point
+#Set this to date (YYYY-MM-DD) which all Cubic Chunk regions have as their "Created on Date" (I recommend adding a month for safety)
+Last-Conversion-Date: 2000-01-01

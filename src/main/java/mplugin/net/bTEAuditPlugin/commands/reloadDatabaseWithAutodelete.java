@@ -14,6 +14,12 @@ import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.zip.InflaterInputStream;
 
@@ -22,6 +28,8 @@ public class reloadDatabaseWithAutodelete implements CommandExecutor {
     private DatabaseManager databaseManager;
     private Connection databaseConnection;
     private static JavaPlugin plugin;
+
+    private Date conversionDate;
 
     public reloadDatabaseWithAutodelete(JavaPlugin plugin) {
         reloadDatabaseWithAutodelete.plugin = plugin;
@@ -33,6 +41,10 @@ public class reloadDatabaseWithAutodelete implements CommandExecutor {
             commandSender.sendMessage("Invalid arguments {yes}!");
             return false;
         }
+
+        conversionDate = getConversionDate();
+
+        Boolean testing = plugin.getConfig().getBoolean("Testing-Mode");
 
         // Run the heavy process asynchronously
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -93,24 +105,37 @@ public class reloadDatabaseWithAutodelete implements CommandExecutor {
 
                     long total = getCombinedInhabitedTime(regionFile, regionData.getName());
 
+                    Boolean wasAfterConversion = afterConversion(regionFile);
+                    if(!wasAfterConversion){
+                        total = -2;
+                    }
+
                     if (total == 0) {
                         ps.setString(4, "AutoDeleted");
-                        if(plugin.getConfig().getBoolean("Testing-Mode")){
+                        if(testing){
                             plugin.getLogger().info("Region " + regionData.getName() + " would be autodeleted!");
+                            commandSender.sendMessage("Region " + regionData.getName() + " would be autodeleted!");
                         }else{
                             regionFile.delete();
                         }
                     } else if(total > 0){
                         ps.setString(4, "Unchecked");
-                        if(plugin.getConfig().getBoolean("Testing-Mode")){
+                        if(testing){
                             plugin.getLogger().info("Region " + regionData.getName() + " has time " + total);
+                            commandSender.sendMessage("Region " + regionData.getName() + " has time " + total);
                         }
-                    } else if(total == -1){
+                    } else if(total == -1) {
                         ps.setString(4, "Error");
-                        plugin.getLogger().severe("Unknown region format!");
+                        plugin.getLogger().severe("Region " + regionData.getName() + " has unknown region format!");
+                        commandSender.sendMessage("Region " + regionData.getName() + " has unknown region format!");
+                    }else if(total == -2){
+                        ps.setString(4, "Unchecked");
+                        plugin.getLogger().info("Region " + regionData.getName() + " has not been modified since conversion!");
+                        commandSender.sendMessage("Region " + regionData.getName() + " has not been modified since conversion!");
                     }else{
                         ps.setString(4, "Error");
-                        plugin.getLogger().warning("Unknown error in getting total inhabited time!");
+                        plugin.getLogger().warning("Region " + regionData.getName() + " unknown error in fetching inhabited time!");
+                        commandSender.sendMessage("Region " + regionData.getName() + " unknown error in fetching inhabited time!");
                     }
                     ps.executeUpdate();
 
@@ -198,5 +223,53 @@ public class reloadDatabaseWithAutodelete implements CommandExecutor {
             }
         }
         return totalInhabitedTime;
+    }
+
+    //returns true if region has been modified since the conversion (thus would have an InhabitedTime)
+    private Boolean afterConversion(File regionFile){
+        Date regionFileDate = new Date(regionFile.lastModified());
+
+        return (regionFileDate.after(conversionDate));
+    }
+    private Date getConversionDate() {
+        String dateStr = plugin.getConfig().getString("Last-Conversion-Date");
+        if (dateStr == null) {
+            throw new IllegalStateException("Last-Conversion-Date not set in config");
+        }
+
+        try {
+            // Preferred ISO format: YYYY-MM-DD
+            LocalDate localDate = LocalDate.parse(dateStr);
+
+            // ADD ONE DAY HERE
+            LocalDate effectiveDate = localDate.plusDays(1);
+
+            return Date.from(
+                    effectiveDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
+            );
+
+        } catch (DateTimeParseException ignored) {
+            // Fallback: Date.toString() format
+            try {
+                DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+
+                Date parsed = df.parse(dateStr);
+
+                // Convert to LocalDate, add one day, convert back
+                LocalDate effectiveDate = parsed.toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .plusDays(1);
+
+                return Date.from(
+                        effectiveDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
+                );
+
+            } catch (ParseException e) {
+                throw new IllegalStateException(
+                        "Invalid Last-Conversion-Date format: " + dateStr, e
+                );
+            }
+        }
     }
 }

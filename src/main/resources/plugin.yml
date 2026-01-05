@@ -60,6 +60,6 @@ commands:
     default: op
 
   reloadDatabaseWithQuickdelete:
-    description: Updates the database with all regions, deleting those that have never been inhabited
+    description: Updates the database with all regions, marking quickDelete for those that have never been inhabited
     permission: BTEAuditPlugin.reloadDatabase
     default: op

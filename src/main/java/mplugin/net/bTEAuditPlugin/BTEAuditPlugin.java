@@ -4,8 +4,6 @@ import mplugin.net.bTEAuditPlugin.commands.*;
 import mplugin.net.bTEAuditPlugin.resources.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +57,7 @@ public final class BTEAuditPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("markRegion")).setExecutor(new markRegion(this, returnPoint, markAsHavingProgressMessage));
         //Other Commands
         Objects.requireNonNull(getCommand("regionStats")).setExecutor(new regionStats(this));
-        Objects.requireNonNull(getCommand("reloadDatabaseWithAutodelete")).setExecutor(new reloadDatabaseWithAutodelete(this));
+        Objects.requireNonNull(getCommand("reloadDatabaseWithQuickdelete")).setExecutor(new reloadDatabaseWithQuickdelete(this));
     }
 
 

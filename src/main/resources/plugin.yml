@@ -23,15 +23,15 @@ commands:
     permission: BTEAuditPlugin.Auditor
     default: op
 
+  deleteRegion:
+    description: Deletes the region file only when 2 unique (non executing) users mark the region as for deletion
+    permission: BTEAuditPlugin.auditor
+    default: op
+
 
   #Admin Commands
   nextDeleteRegion:
     description: TPs an Admin to the next world with 2 unique "Marked as for Deletion" authors
-    permission: BTEAuditPlugin.deleteRegionFiles
-    default: op
-
-  deleteRegion:
-    description: Deletes the region file only when 2 unique (non executing) users mark the region as for deletion
     permission: BTEAuditPlugin.deleteRegionFiles
     default: op
 
@@ -59,7 +59,7 @@ commands:
     permission: BTEAuditPlugin.resetDatabase
     default: op
 
-  reloadDatabaseWithAutodelete:
+  reloadDatabaseWithQuickdelete:
     description: Updates the database with all regions, deleting those that have never been inhabited
     permission: BTEAuditPlugin.reloadDatabase
     default: op

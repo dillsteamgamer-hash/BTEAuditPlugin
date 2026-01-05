@@ -23,7 +23,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.zip.InflaterInputStream;
 
-public class reloadDatabaseWithAutodelete implements CommandExecutor {
+public class reloadDatabaseWithQuickdelete implements CommandExecutor {
 
     private DatabaseManager databaseManager;
     private Connection databaseConnection;
@@ -31,8 +31,8 @@ public class reloadDatabaseWithAutodelete implements CommandExecutor {
 
     private Date conversionDate;
 
-    public reloadDatabaseWithAutodelete(JavaPlugin plugin) {
-        reloadDatabaseWithAutodelete.plugin = plugin;
+    public reloadDatabaseWithQuickdelete(JavaPlugin plugin) {
+        reloadDatabaseWithQuickdelete.plugin = plugin;
     }
 
     @Override
@@ -111,18 +111,16 @@ public class reloadDatabaseWithAutodelete implements CommandExecutor {
                     }
 
                     if (total == 0) {
-                        ps.setString(4, "AutoDeleted");
+                        ps.setString(4, "quickDelete");
                         if(testing){
-                            plugin.getLogger().info("Region " + regionData.getName() + " would be autodeleted!");
-                            commandSender.sendMessage("Region " + regionData.getName() + " would be autodeleted!");
-                        }else{
-                            regionFile.delete();
+                            plugin.getLogger().info("Region " + regionData.getName() + " would be marked quickDelete!");
+                            commandSender.sendMessage("Region " + regionData.getName() + " would be marked quickDelete!");
                         }
                     } else if(total > 0){
                         ps.setString(4, "Unchecked");
                         if(testing){
-                            plugin.getLogger().info("Region " + regionData.getName() + " has time " + total);
-                            commandSender.sendMessage("Region " + regionData.getName() + " has time " + total);
+                            plugin.getLogger().info("Region " + regionData.getName() + " has player time!");
+                            commandSender.sendMessage("Region " + regionData.getName() + " has player time!");
                         }
                     } else if(total == -1) {
                         ps.setString(4, "Error");
@@ -218,6 +216,9 @@ public class reloadDatabaseWithAutodelete implements CommandExecutor {
                         }
 
                         totalInhabitedTime += inhabitedTime;
+                        if(totalInhabitedTime >= 100){
+                            return totalInhabitedTime;
+                        }
                     }
                 }
             }

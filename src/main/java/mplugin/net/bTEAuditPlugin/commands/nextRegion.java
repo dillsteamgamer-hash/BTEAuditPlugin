@@ -45,8 +45,7 @@ public class nextRegion implements CommandExecutor {
 
         // Fetch the next region
         try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT * FROM regions WHERE status='Unchecked' OR " +
-                        "(deleted1 IS NOT NULL AND deleted2 IS NULL AND deleted1 != ? AND status='MFD') LIMIT 1")) {
+                "SELECT * FROM regions WHERE status='Unchecked' OR (deleted1 IS NOT NULL AND deleted2 IS NULL AND deleted1 != ? AND status='MFD') OR status='quickDelete' LIMIT 1")) {
             ps.setString(1, senderUUID);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
@@ -67,6 +66,12 @@ public class nextRegion implements CommandExecutor {
             return true;
         }
         player.sendMessage("§3Next Region: " + regionData.getName());
+
+        if(regionData.getStatus().equals("quickDelete")){
+            player.sendMessage("§4This region has been automatically marked probably safe for deletion, use /deleteRegion {yes/no} to delete this region.");
+            player.sendMessage("§4Yes will delete the region, No will send it to the Unchecked queue!");
+            player.sendMessage("§4Be carful!");
+        }
 
 
         World auditWorld = Bukkit.getWorld("audit_world_" + player.getName());

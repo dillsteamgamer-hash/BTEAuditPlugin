@@ -21,7 +21,7 @@ public class auditHelp implements CommandExecutor {
         commandSender.sendMessage("§e/nextdeleteregion: Similar to /nextregion, but will only teleport to regions with 2 (non executor) approvals");
         commandSender.sendMessage("§e/deleteregion yes/no: Used to give approval to delete a region or to reset its status to 'Unchecked'");
         commandSender.sendMessage("§e/reloaddatabase: Used to reload the database with all new regions");
-        commandSender.sendMessage("§e/reloaddatabasewithautodelete: Used to reload the database with new regions, will autodelete regions that have never been entered by a player!");
+        commandSender.sendMessage("§e/reloaddatabasewithquickdelete: Used to reload the database with new regions, will mark regions never entered by a player as for quickDelete!");
         commandSender.sendMessage("§e/resetdatabase: Used to completely reset the database, only used in extreme scenarios");
         commandSender.sendMessage("§6----------------------");
 

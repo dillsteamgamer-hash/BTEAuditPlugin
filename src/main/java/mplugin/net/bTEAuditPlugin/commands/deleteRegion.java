@@ -90,7 +90,7 @@ public class deleteRegion implements CommandExecutor, TabCompleter {
 
         //Makes sure the command sender defo has permission to delete the region
         //Will then update the necessary database files and delete the region I.A.
-        if(!regionData.getDeleted1().equals(senderUUID) && !regionData.getDeleted2().equals(senderUUID)){
+        if((regionData.getStatus().equals("quickDelete")) || (!regionData.getDeleted1().equals(senderUUID) && !regionData.getDeleted2().equals(senderUUID) && regionData.getStatus().equals("MFD"))){
             player.sendMessage("§2Has command access!");
             player.teleport(new Location(world, blockPoint.getxPos(), blockPoint.getyPos(), blockPoint.getzPos()));
             if(args.length == 1){

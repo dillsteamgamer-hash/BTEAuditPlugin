@@ -45,7 +45,7 @@ public class nextDeleteRegion implements CommandExecutor {
         String senderUUID = String.valueOf(player.getUniqueId());
 
         //Same code as in nextRegion, with an extended SQL query to make sure that they are going to a region they can delete
-        try (PreparedStatement ps = databaseConnection.prepareStatement("SELECT * FROM regions WHERE (status='MFD' AND deleted1 IS NOT NULL AND deleted2 IS NOT NULL AND deleted1 != ? AND deleted2 != ?) LIMIT 1")) {
+        try (PreparedStatement ps = databaseConnection.prepareStatement("SELECT name, x, z, status FROM regions WHERE (status='MFD' AND deleted1 IS NOT NULL AND deleted2 IS NOT NULL AND deleted1 != ? AND deleted2 != ?) LIMIT 1")) {
             ps.setString(1, senderUUID);
             ps.setString(2, senderUUID);
             ResultSet rs = ps.executeQuery();

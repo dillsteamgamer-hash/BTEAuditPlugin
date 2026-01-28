@@ -45,7 +45,7 @@ public class nextRegion implements CommandExecutor {
 
         // Fetch the next region
         try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT * FROM regions WHERE status='Unchecked' OR (deleted1 IS NOT NULL AND deleted2 IS NULL AND deleted1 != ? AND status='MFD') OR status='quickDelete' LIMIT 1")) {
+                "SELECT name, x, z, status FROM regions WHERE status='Unchecked' OR (deleted1 IS NOT NULL AND deleted2 IS NULL AND deleted1 != ? AND status='MFD') OR status='quickDelete' LIMIT 1")) {
             ps.setString(1, senderUUID);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {

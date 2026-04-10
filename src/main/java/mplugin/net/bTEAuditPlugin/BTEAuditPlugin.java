@@ -25,19 +25,6 @@ public final class BTEAuditPlugin extends JavaPlugin {
         //Deletes the files in audit_world_xyz folders
         deleteAuditWorlds();
 
-
-        /*
-        //Creates the voidWorld
-        WorldCreator creator = new WorldCreator("audit_world");
-        creator.generator(new VoidWorldGenerator());
-        World world = creator.createWorld();
-        if (world != null) {
-            getLogger().info("Void world created successfully: " + world.getName());
-        } else {
-            getLogger().warning("Failed to create void world!");
-        }
-        */
-
         //Reads from config file
         BlockPoint returnPoint = new BlockPoint(getConfig().getInt("Mark-For-Deletion-TP-X"), getConfig().getInt("Mark-For-Deletion-TP-Y"), getConfig().getInt("Mark-For-Deletion-TP-Z"));
         String markAsHavingProgressMessage = getConfig().getString("Mark-Progress-Message");

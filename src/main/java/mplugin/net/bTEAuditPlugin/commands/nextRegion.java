@@ -79,7 +79,7 @@ public class nextRegion implements CommandExecutor {
         if (auditWorld != null) {
             for (Player p : auditWorld.getPlayers()) {
                 p.teleport(new Location(Bukkit.getWorld(Objects.requireNonNull(plugin.getConfig().getString("Earth-World-Name"))), p.getX(), p.getY(), p.getZ()));
-                p.sendMessage("World has been emptied, only 1 person can audit at a time!");
+                p.sendMessage("Error: You should not be in another user's audit world");
             }
 
             // Unload the world

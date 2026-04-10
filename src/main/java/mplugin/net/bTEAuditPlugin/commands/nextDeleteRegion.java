@@ -82,16 +82,6 @@ public class nextDeleteRegion implements CommandExecutor {
         }
 
 
-        // Reload the audit world
-        WorldCreator creator = new WorldCreator("audit_world_" + player.getName());
-        creator.generator(new VoidWorldGenerator());
-        World world = creator.createWorld();
-        if (world != null) {
-            plugin.getLogger().info("Void world created successfully: " + world.getName());
-        } else {
-            plugin.getLogger().warning("Failed to create void world!");
-        }
-
         //Copy region file to audit_world
         File source = new File(Bukkit.getWorldContainer(), plugin.getConfig().getString("Earth-World-Name") + "/region/" + regionData.getName());
         File targetDir = new File(Bukkit.getWorldContainer(), "audit_world_" + player.getName() + "/region/");
@@ -106,6 +96,17 @@ public class nextDeleteRegion implements CommandExecutor {
             return true;
         }
         player.sendMessage("§3Copied Region Data to Audit World");
+
+        // Reload the audit world
+        player.sendMessage("§3Loading audit world");
+        WorldCreator creator = new WorldCreator("audit_world_" + player.getName());
+        creator.generator(new VoidWorldGenerator());
+        World world = creator.createWorld();
+        if (world != null) {
+            plugin.getLogger().info("Void world created successfully: " + world.getName());
+        } else {
+            plugin.getLogger().warning("Failed to create void world!");
+        }
 
         //TPs player to the centre of the copy of the region in the audit world
         int blockX = regionData.getX() * 512 + 256;

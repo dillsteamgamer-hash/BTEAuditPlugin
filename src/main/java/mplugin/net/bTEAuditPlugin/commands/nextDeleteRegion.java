@@ -97,33 +97,32 @@ public class nextDeleteRegion implements CommandExecutor {
         }
         player.sendMessage("§3Copied Region Data to Audit World");
 
-        // Reload the audit world
-        player.sendMessage("§3Loading audit world");
-        WorldCreator creator = new WorldCreator("audit_world_" + player.getName());
-        creator.generator(new VoidWorldGenerator());
-        World world = creator.createWorld();
-        if (world != null) {
-            plugin.getLogger().info("Void world created successfully: " + world.getName());
-        } else {
-            plugin.getLogger().warning("Failed to create void world!");
-        }
+        player.sendMessage("§3Loading audit world, this shouldn't take long!");
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            // Reload the audit world
+            WorldCreator creator = new WorldCreator("audit_world_" + player.getName());
+            creator.generator(new VoidWorldGenerator());
+            World world = creator.createWorld();
+            if (world != null) {
+                plugin.getLogger().info("Void world created successfully: " + world.getName());
+            } else {
+                plugin.getLogger().warning("Failed to create void world!");
+            }
 
-        //TPs player to the centre of the copy of the region in the audit world
-        int blockX = regionData.getX() * 512 + 256;
-        int blockZ = regionData.getZ() * 512 + 256;
+            // Teleport player to the center of the region
+            int blockX = regionData.getX() * 512 + 256;
+            int blockZ = regionData.getZ() * 512 + 256;
+            assert world != null;
+            int y = world.getHighestBlockYAt(blockX, blockZ);
 
-        World voidWorld = Bukkit.getWorld("audit_world_" + player.getName());
-        assert voidWorld != null;
+            player.teleport(new Location(world, blockX, y + 5, blockZ));
+            player.sendMessage("§3Teleported to region: " + regionData.getName());
 
-        int y = voidWorld.getHighestBlockYAt(blockX, blockZ);
+            player.setAllowFlight(true);
+            player.setFlying(true);
 
-        player.teleport(new Location(voidWorld, blockX, y + 5, blockZ));
-        player.sendMessage("§3Teleported to region: " + regionData.getName());
-
-        player.setMetadata("currentAudit", new FixedMetadataValue(plugin, regionData.getName()));
-
-        player.setAllowFlight(true);
-        player.setFlying(true);
+            player.setMetadata("currentAudit", new FixedMetadataValue(plugin, regionData.getName()));
+        }, 20L);
 
         databaseManager.closeDatabase();
         return false;

@@ -67,7 +67,7 @@ public class nextRegion implements CommandExecutor {
         }
         player.sendMessage("§3Next Region: " + regionData.getName());
 
-        if(regionData.getStatus().equals("quickDelete")){
+        if (regionData.getStatus().equals("quickDelete")) {
             player.sendMessage("§4This region has been automatically marked probably safe for deletion, use /deleteRegion {yes/no} to delete this region.");
             player.sendMessage("§4Yes will delete the region, No will send it to the Unchecked queue!");
             player.sendMessage("§4Be carful!");
@@ -102,32 +102,35 @@ public class nextRegion implements CommandExecutor {
         }
         player.sendMessage("§3Copied Region Data to Audit World");
 
-        // Reload the audit world
         player.sendMessage("§3Loading audit world, this shouldn't take long!");
-        WorldCreator creator = new WorldCreator("audit_world_" + player.getName());
-        creator.generator(new VoidWorldGenerator());
-        World world = creator.createWorld();
-        if (world != null) {
-            plugin.getLogger().info("Void world created successfully: " + world.getName());
-        } else {
-            plugin.getLogger().warning("Failed to create void world!");
-        }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            // Reload the audit world
+            WorldCreator creator = new WorldCreator("audit_world_" + player.getName());
+            creator.generator(new VoidWorldGenerator());
+            World world = creator.createWorld();
+            if (world != null) {
+                plugin.getLogger().info("Void world created successfully: " + world.getName());
+            } else {
+                plugin.getLogger().warning("Failed to create void world!");
+            }
 
-        // Teleport player to the center of the region
-        int blockX = regionData.getX() * 512 + 256;
-        int blockZ = regionData.getZ() * 512 + 256;
-        assert world != null;
-        int y = world.getHighestBlockYAt(blockX, blockZ);
+            // Teleport player to the center of the region
+            int blockX = regionData.getX() * 512 + 256;
+            int blockZ = regionData.getZ() * 512 + 256;
+            assert world != null;
+            int y = world.getHighestBlockYAt(blockX, blockZ);
 
-        player.teleport(new Location(world, blockX, y + 5, blockZ));
-        player.sendMessage("§3Teleported to region: " + regionData.getName());
+            player.teleport(new Location(world, blockX, y + 5, blockZ));
+            player.sendMessage("§3Teleported to region: " + regionData.getName());
 
-        player.setAllowFlight(true);
-        player.setFlying(true);
+            player.setAllowFlight(true);
+            player.setFlying(true);
 
-        player.setMetadata("currentAudit", new FixedMetadataValue(plugin, regionData.getName()));
+            player.setMetadata("currentAudit", new FixedMetadataValue(plugin, regionData.getName()));
+        }, 20L);
 
         databaseManager.closeDatabase();
         return true;
+
     }
 }

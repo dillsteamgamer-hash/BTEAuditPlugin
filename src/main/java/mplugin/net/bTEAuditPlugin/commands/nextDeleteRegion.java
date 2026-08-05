@@ -3,10 +3,7 @@ package mplugin.net.bTEAuditPlugin.commands;
 import mplugin.net.bTEAuditPlugin.resources.DatabaseManager;
 import mplugin.net.bTEAuditPlugin.resources.RegionData;
 import mplugin.net.bTEAuditPlugin.resources.VoidWorldGenerator;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -120,6 +117,10 @@ public class nextDeleteRegion implements CommandExecutor {
 
             player.setAllowFlight(true);
             player.setFlying(true);
+
+            WorldBorder worldBorder = world.getWorldBorder();
+            worldBorder.setCenter(blockX, blockZ);
+            worldBorder.setSize(514.0);
 
             player.setMetadata("currentAudit", new FixedMetadataValue(plugin, regionData.getName()));
         }, 20L);
